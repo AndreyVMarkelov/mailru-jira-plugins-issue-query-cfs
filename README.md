@@ -1,4 +1,4 @@
 mailru-jira-plugins-issue-query-cfs
 ===================================
 
-Issue queries custom fields
+Issue Queries Custom Fields Jira Plug-In
