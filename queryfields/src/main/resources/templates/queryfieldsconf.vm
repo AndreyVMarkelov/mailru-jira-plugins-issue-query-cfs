@@ -1,1 +1,94 @@
-queryfieldsconf.vm
+## Created by Andrey Markelov 29-08-2012.
+## Copyright Mail.Ru Group 2012. All rights reserved.
+<html>
+  <head>
+    <title>$action.getText("mailru.selectcf.admin")</title>
+    <meta name="decorator" content="admin"/>
+    $webResourceManager.requireResource("jira.webresources:global-static")
+    $webResourceManager.requireResource("jira.webresources:jira-global")
+    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+    $webResourceManager.requireResource("jira.webresources:autocomplete")
+    $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrsc")
+  </head>
+  <body class="aui">
+    #if($action.hasAdminPermission())
+      <input type="hidden" name="atl_token" id="atl_token" value="$action.getXsrfToken()"/>
+      <table border="0" cellpadding="10" cellspacing="0" width="100%">
+        <tbody>
+          <tr>
+            <td>
+              <table class="jiraform maxWidth">
+                <tr>
+                  <td class="jiraformheader">
+                    $action.getText("1")
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <table class="grid maxWidth">
+                      <thead>
+                        <tr>
+                          <th width="15%">$action.getText("1")</th>
+                          <th width="15%">$action.getText("1")</th>
+                          <th width="55%">$action.getText("1")</th>
+                          <th width="15%">$action.getText("1")</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      #foreach($lrFields in $action.getCfData().getLinkerFields())
+                        <tr>
+                          <td width="15%">$lrFields.getName()</td>
+                          <td width="15%">$lrFields.getProjectName()</td>
+                          <td width="55%">#if($lrFields.getData())$lrFields.getData()#end</td>
+                          <td width="15%"><a href="#" onclick="configureJcl(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId());">$action.getText("1")</a></td>
+                        </tr>
+                      #end
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table class="jiraform maxWidth">
+                <tr>
+                  <td class="jiraformheader">
+                    $action.getText("1")
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <table class="grid maxWidth">
+                      <thead>
+                        <tr>
+                          <th width="15%">$action.getText("1")</th>
+                          <th width="15%">$action.getText("1")</th>
+                          <th width="55%">$action.getText("1")</th>
+                          <th width="15%">$action.getText("1")</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      #foreach($ldFields in $action.getCfData().getLinkedFields())
+                        <tr>
+                          <td width="15%">$ldFields.getName()</td>
+                          <td width="15%">$ldFields.getProjectName()</td>
+                          <td width="55%">#if($ldFields.getData())$ldFields.getData()#end</td>
+                          <td width="15%"><a href="#" onclick="configureJcl(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId());">$action.getText("1")</a></td>
+                        </tr>
+                      #end
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    #else
+      <div class="errorArea">$action.getText("mailru.selectcf.admin.link.error")</div>
+    #end
+  </body>
+</html>

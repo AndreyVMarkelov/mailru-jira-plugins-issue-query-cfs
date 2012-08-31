@@ -1,9 +1,21 @@
+/*
+ * Created by Andrey Markelov 29-08-2012.
+ * Copyright Mail.Ru Group 2012. All rights reserved.
+ */
 package ru.mail.jira.plugins.lf;
 
+import java.util.List;
+import org.ofbiz.core.entity.GenericValue;
+import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
+import com.atlassian.sal.api.ApplicationProperties;
 
 /**
- * 
+ * Administration page of query linking custom fields.
  * 
  * @author Andrey Markelov
  */
@@ -15,16 +27,140 @@ public class QueryFieldsConfig
      */
     private static final long serialVersionUID = 5304304911404478635L;
 
-    @Override
-    protected String doExecute()
-    throws Exception
+    /**
+     * Application properties.
+     */
+    private final ApplicationProperties applicationProperties;
+
+    /**
+     * Date.
+     */
+    private final CfData cfData;
+
+    /**
+     * Constructor.
+     */
+    public QueryFieldsConfig(
+        ApplicationProperties applicationProperties,
+        CustomFieldManager cfMgr,
+        PermissionManager perMgr,
+        QueryFieldsMgr qfMgr)
     {
-        return super.doExecute();
+        this.applicationProperties = applicationProperties;
+        this.cfData = new CfData();
+
+        List<CustomField> cgList = cfMgr.getCustomFieldObjects();
+        for (CustomField cf : cgList)
+        {
+            if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linker-field"))
+            {
+                if (cf.isGlobal() && perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+                {
+                    QueryFieldStruct qfs = new QueryFieldStruct(
+                        cf.getIdAsLong(),
+                        cf.getName(),
+                        cf.getDescription(),
+                        Consts.PROJECT_ID_FOR_GLOBAL_CF,
+                        Consts.PROJECT_NAME_FOR_GLOBAL_CF,
+                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                    cfData.addLinkerField(qfs);
+                }
+                else
+                {
+                    List<GenericValue> projs = cf.getAssociatedProjects();
+                    for (GenericValue proj : projs)
+                    {
+                        Long projId = (Long) proj.get("id");
+                        String projName = (String) proj.get("name");
+
+                        if (!perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+                        {
+                            continue;
+                        }
+
+                        QueryFieldStruct qfs = new QueryFieldStruct(
+                            cf.getIdAsLong(),
+                            cf.getName(),
+                            cf.getDescription(),
+                            projId,
+                            projName,
+                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId));
+                        cfData.addLinkerField(qfs);
+                    }
+                }
+            }
+            else if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linked-field"))
+            {
+                if (cf.isGlobal() && perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+                {
+                    QueryFieldStruct qfs = new QueryFieldStruct(
+                        cf.getIdAsLong(),
+                        cf.getName(),
+                        cf.getDescription(),
+                        Consts.PROJECT_ID_FOR_GLOBAL_CF,
+                        Consts.PROJECT_NAME_FOR_GLOBAL_CF,
+                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                    cfData.addLinkedField(qfs);
+                }
+                else
+                {
+                    List<GenericValue> projs = cf.getAssociatedProjects();
+                    for (GenericValue proj : projs)
+                    {
+                        Long projId = (Long) proj.get("id");
+                        String projName = (String) proj.get("name");
+
+                        if (!perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+                        {
+                            continue;
+                        }
+
+                        QueryFieldStruct qfs = new QueryFieldStruct(
+                            cf.getIdAsLong(),
+                            cf.getName(),
+                            cf.getDescription(),
+                            projId,
+                            projName,
+                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId));
+                        cfData.addLinkedField(qfs);
+                    }
+                }
+            }
+        }
     }
 
-    @Override
-    protected void doValidation()
+    /**
+     * Get context path.
+     */
+    public String getBaseUrl()
     {
-        super.doValidation();
+        return applicationProperties.getBaseUrl();
+    }
+
+    /**
+     * Get plugIn data.
+     */
+    public CfData getCfData()
+    {
+        return cfData;
+    }
+
+    /**
+     * Check administer permissions.
+     */
+    public boolean hasAdminPermission()
+    {
+        User user = getLoggedInUser();
+        if (user == null)
+        {
+            return false;
+        }
+
+        if (getPermissionManager().hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
