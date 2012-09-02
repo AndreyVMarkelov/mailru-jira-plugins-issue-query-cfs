@@ -44,24 +44,24 @@
         <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-linker-field"/>
     </customfield-searcher>
 
-    <web-item key="queryfields-configuration" name="Mail.Ru select CF configuration link" section="system.admin/globalsettings" weight="95">
-        <label key="mailru.selectcf.admin"/>
+    <web-item key="queryfields-configuration" name="Query Issues Custom Fields configuration link" section="system.admin/globalsettings" weight="95">
+        <label key="queryfields.admin.title"/>
         <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
             <param name="permission">admin</param>
         </condition>
-        <link linkId="queryfields-configuration_link">/secure/MailSelectConfig.jspa</link>
+        <link linkId="queryfields-configuration_link">/secure/QueryConfigCfsConfig.jspa</link>
     </web-item>
 
-    <webwork1 key="queryfields_conf" name="Mail.Ru select CF configuration" class="java.lang.Object">
+    <webwork1 key="queryfields_conf" name="Query Issues Custom Fields configuration" class="java.lang.Object">
         <actions>
-            <action name="ru.mail.jira.plugins.lf.QueryFieldsConfig" alias="MailSelectConfig">
+            <action name="ru.mail.jira.plugins.lf.QueryFieldsConfig" alias="QueryConfigCfsConfig">
                 <view name="input">/templates/queryfieldsconf.vm</view>
                 <view name="success">/templates/queryfieldsconf.vm</view>
             </action>
         </actions>
     </webwork1>
 
-    <component key="queryfields-config" name="Mail.Ru select Plug-In configuration" class="ru.mail.jira.plugins.lf.QueryFieldsMgrImpl"/>
+    <component key="queryfields-config" name="Query Issues Custom Fields Plug-In configuration" class="ru.mail.jira.plugins.lf.QueryFieldsMgrImpl"/>
     <component-import key="pluginSettingsFactory">
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component-import>
@@ -71,7 +71,7 @@
 
     <!-- Rest resources -->
     <rest key="queryfieldsws" path="/queryfieldsws" version="1.0">
-        <description>Provides the REST resource for the Mail.Ru select CF plugin.</description>
+        <description>Provides the REST resource for the Query Issues Custom Fields.</description>
     </rest>
     <!-- End rest -->
 </atlassian-plugin>

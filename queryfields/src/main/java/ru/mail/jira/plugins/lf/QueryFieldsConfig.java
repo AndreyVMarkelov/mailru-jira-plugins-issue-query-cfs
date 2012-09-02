@@ -9,7 +9,6 @@ import org.ofbiz.core.entity.GenericValue;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -43,7 +42,6 @@ public class QueryFieldsConfig
     public QueryFieldsConfig(
         ApplicationProperties applicationProperties,
         CustomFieldManager cfMgr,
-        PermissionManager perMgr,
         QueryFieldsMgr qfMgr)
     {
         this.applicationProperties = applicationProperties;
@@ -54,7 +52,7 @@ public class QueryFieldsConfig
         {
             if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linker-field"))
             {
-                if (cf.isGlobal() && perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+                if (cf.isAllProjects())
                 {
                     QueryFieldStruct qfs = new QueryFieldStruct(
                         cf.getIdAsLong(),
@@ -73,11 +71,6 @@ public class QueryFieldsConfig
                         Long projId = (Long) proj.get("id");
                         String projName = (String) proj.get("name");
 
-                        if (!perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
-                        {
-                            continue;
-                        }
-
                         QueryFieldStruct qfs = new QueryFieldStruct(
                             cf.getIdAsLong(),
                             cf.getName(),
@@ -91,7 +84,7 @@ public class QueryFieldsConfig
             }
             else if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linked-field"))
             {
-                if (cf.isGlobal() && perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
+                if (cf.isAllProjects())
                 {
                     QueryFieldStruct qfs = new QueryFieldStruct(
                         cf.getIdAsLong(),
@@ -109,11 +102,6 @@ public class QueryFieldsConfig
                     {
                         Long projId = (Long) proj.get("id");
                         String projName = (String) proj.get("name");
-
-                        if (!perMgr.hasPermission(Permissions.ADMINISTER, getLoggedInUser()))
-                        {
-                            continue;
-                        }
 
                         QueryFieldStruct qfs = new QueryFieldStruct(
                             cf.getIdAsLong(),

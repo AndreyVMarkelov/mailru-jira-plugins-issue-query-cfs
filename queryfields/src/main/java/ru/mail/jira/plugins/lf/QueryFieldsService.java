@@ -4,10 +4,9 @@
  */
 package ru.mail.jira.plugins.lf;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,15 +14,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.log4j.Logger;
 import org.apache.velocity.exception.VelocityException;
-
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.xsrf.XsrfTokenGenerator;
+import com.atlassian.jira.util.I18nHelper;
+import com.atlassian.jira.util.MessageSet;
 
 /**
  * Query Issue Linking Custom Fields plugIn REST service.
@@ -44,31 +44,57 @@ public class QueryFieldsService
     private final QueryFieldsMgr qfMgr;
 
     /**
+     * Search service.
+     */
+    private final SearchService searchService;
+
+    /**
      * Construct.
      */
     public QueryFieldsService(
-        QueryFieldsMgr qfMgr)
+        QueryFieldsMgr qfMgr,
+        SearchService searchService)
     {
         this.qfMgr = qfMgr;
+        this.searchService = searchService;
     }
 
     @POST
-    @Path("/initjcldlg")
+    @Path("/initjqldlg")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response initJclDialog(@Context HttpServletRequest req)
-    throws VelocityException
+    public Response initJqlDialog(@Context HttpServletRequest req)
     {
         JiraAuthenticationContext authCtx = ComponentManager.getInstance().getJiraAuthenticationContext();
+        I18nHelper i18n = authCtx.getI18nHelper();
         User user = authCtx.getLoggedInUser();
         if (user == null)
         {
             log.error("QueryFieldsService::initJclDialog - User is not logged");
-            return Response.status(401).build();
+            return Response.ok(i18n.getText("queryfields.error.notlogged")).status(401).build();
         }
 
-        String cfId = req.getParameter("cfId");
-        String prId = req.getParameter("prId");
+        String cfIdStr = req.getParameter("cfId");
+        String prIdStr = req.getParameter("prId");
+        if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr))
+        {
+            log.error("QueryFieldsService::initJclDialog - Required parameters are not set");
+            return Response.ok(i18n.getText("queryfields.error.notrequiredparms")).status(500).build();
+        }
 
+        long cfId;
+        long prId;
+        try
+        {
+            cfId = Long.parseLong(cfIdStr);
+            prId = Long.parseLong(prIdStr);
+        }
+        catch (NumberFormatException nex)
+        {
+            log.error("QueryFieldsService::initJclDialog - Parameters are not valid");
+            return Response.ok(i18n.getText("queryfields.error.notvalidparms")).status(500).build();
+        }
+
+        String data = qfMgr.getQueryFieldData(cfId, prId);
         XsrfTokenGenerator xsrfTokenGenerator = ComponentManager.getComponentInstanceOfType(XsrfTokenGenerator.class);
         String atl_token = xsrfTokenGenerator.generateToken(req);
 
@@ -78,48 +104,105 @@ public class QueryFieldsService
         params.put("atl_token", atl_token);
         params.put("cfId", cfId);
         params.put("prId", prId);
+        params.put("data", data);
 
-        return Response.ok(new HtmlEntity(ComponentAccessor.getVelocityManager().getBody("templates/", "setjcl.vm", params))).build();
+        try
+        {
+            String body = ComponentAccessor.getVelocityManager().getBody("templates/", "setjql.vm", params);
+            return Response.ok(new HtmlEntity(body)).status(500).build();
+        }
+        catch (VelocityException vex)
+        {
+            log.error("QueryFieldsService::initJclDialog - Velocity parsing error", vex);
+            return Response.ok(i18n.getText("queryfields.error.internalerror")).status(500).build();
+        }
     }
 
     @POST
-    @Path("/setjcl")
+    @Path("/setjql")
     @Produces({MediaType.APPLICATION_JSON})
     public Response setJcl(@Context HttpServletRequest req)
     {
         JiraAuthenticationContext authCtx = ComponentManager.getInstance().getJiraAuthenticationContext();
+        I18nHelper i18n = authCtx.getI18nHelper();
         User user = authCtx.getLoggedInUser();
         if (user == null)
         {
-            log.error("QueryFieldsService::initJclDialog - User is not logged");
-            return Response.status(401).build();
+            log.error("QueryFieldsService::setJcl - User is not logged");
+            return Response.ok(i18n.getText("queryfields.error.notlogged")).status(401).build();
         }
 
         XsrfTokenGenerator xsrfTokenGenerator = ComponentManager.getComponentInstanceOfType(XsrfTokenGenerator.class);
         String token = xsrfTokenGenerator.getToken(req);
         if (!xsrfTokenGenerator.generatedByAuthenticatedUser(token))
         {
-            //JiraWebUtils.getHttpRequest().getContextPath();
-            return Response.serverError().build();
+            log.error("QueryFieldsService::setJcl - There is no token");
+            return Response.ok(i18n.getText("queryfields.error.internalerror")).status(500).build();
         }
         else
         {
             String atl_token = req.getParameter("atl_token");
             if (!atl_token.equals(token))
             {
-                return Response.serverError().build();
+                log.error("QueryFieldsService::setJcl - Token is invalid");
+                return Response.ok(i18n.getText("queryfields.error.internalerror")).status(500).build();
             }
         }
 
-        ComponentManager.getInstance().getIssueTypeSchemeManager();
+        String cfIdStr = req.getParameter("cfId");
+        String prIdStr = req.getParameter("prId");
+        String data = req.getParameter("jqlclause");
+        if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr))
+        {
+            log.error("QueryFieldsService::setJcl - Required parameters are not set");
+            return Response.ok(i18n.getText("queryfields.error.notrequiredparms")).status(500).build();
+        }
 
-        String cfId = req.getParameter("cfId");
-        String prId = req.getParameter("prId");
-        String data = req.getParameter("email");
+        long cfId;
+        long prId;
+        try
+        {
+            cfId = Long.parseLong(cfIdStr);
+            prId = Long.parseLong(prIdStr);
+        }
+        catch (NumberFormatException nex)
+        {
+            log.error("QueryFieldsService::setJcl - Parameters are not valid");
+            return Response.ok(i18n.getText("queryfields.error.notvalidparms")).status(500).build();
+        }
 
-        qfMgr.setQueryFieldData(Long.parseLong(cfId), Long.parseLong(prId), data);
+        if (Utils.isValidStr(data))
+        {
+            SearchService.ParseResult parseResult = searchService.parseQuery(user, data);
+            if (parseResult.isValid())
+            {
+                qfMgr.setQueryFieldData(cfId, prId, data);
+            }
+            else
+            {
+                MessageSet ms = parseResult.getErrors();
+                Set<String> errs = ms.getErrorMessages();
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("errs", errs);
+                params.put("i18n", i18n);
 
-        String baseUrl = Utils.getBaseUrl(req);
-        return Response.seeOther(URI.create(baseUrl + "/secure/MailSelectConfig.jspa")).build();
+                try
+                {
+                    String body = ComponentAccessor.getVelocityManager().getBody("templates/", "conferr.vm", params);
+                    return Response.ok(new HtmlEntity(body)).status(500).build();
+                }
+                catch (VelocityException vex)
+                {
+                    log.error("QueryFieldsService::setJcl - Velocity parsing error", vex);
+                    return Response.ok(i18n.getText("queryfields.error.internalerror")).status(500).build();
+                }
+            }
+        }
+        else
+        {
+            qfMgr.setQueryFieldData(cfId, prId, "");
+        }
+
+        return Response.ok().build();
     }
 }

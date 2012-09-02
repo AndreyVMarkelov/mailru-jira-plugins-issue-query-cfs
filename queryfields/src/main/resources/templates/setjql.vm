@@ -1,0 +1,12 @@
+## Created by Andrey Markelov 29-08-2012.
+## Copyright Mail.Ru Group 2012. All rights reserved.
+<div id="errorpart" name="errorpart"></div>
+<form class="aui" id="setjqlform" name="setjqlform">
+    <input type="hidden" name="atl_token" value="$atl_token"/>
+    <input type="hidden" name="cfId" value="$cfId"/>
+    <input type="hidden" name="prId" value="$prId"/>
+    <div class="field-group">
+        <label for="jqlclause">$i18n.getText("queryfields.jqlclause")<span class="aui-icon icon-required"></label>
+        <textarea rows="3" cols="30" id="jqlclause" name="jqlclause">#if($data)$data#end</textarea>
+    </div>
+</form>

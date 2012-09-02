@@ -1,0 +1,16 @@
+/*
+  Created by Andrey Markelov 29-08-2012.
+  Copyright Mail.Ru Group 2012. All rights reserved.
+*/
+.errdlg {
+    background: #FFCCCC;
+    border: 1px solid #CC0000;
+    padding: 12px 12px 12px 12px;
+}
+
+.errdiv {
+    background: #FFCCCC;
+    border: 1px solid #CC0000;
+    padding: 7px 7px 7px 7px;
+    margin: 12px 12px 12px 12px;
+}

@@ -1,0 +1,8 @@
+## Created by Andrey Markelov 29-08-2012.
+## Copyright Mail.Ru Group 2012. All rights reserved.
+$i18n.getText("queryfields.error.jql")
+<ul>
+#foreach($err in $errs)
+<li>$err</li>
+#end
+</ul>
