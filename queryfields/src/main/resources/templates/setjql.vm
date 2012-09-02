@@ -7,6 +7,6 @@
     <input type="hidden" name="prId" value="$prId"/>
     <div class="field-group">
         <label for="jqlclause">$i18n.getText("queryfields.jqlclause")<span class="aui-icon icon-required"></label>
-        <textarea rows="3" cols="30" id="jqlclause" name="jqlclause">#if($data)$data#end</textarea>
+        <textarea rows="3" cols="30" id="jqlclause" name="jqlclause">#if($jqlData)$jqlData#end</textarea>
     </div>
 </form>

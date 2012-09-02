@@ -94,7 +94,6 @@ public class QueryFieldsService
             return Response.ok(i18n.getText("queryfields.error.notvalidparms")).status(500).build();
         }
 
-        String data = qfMgr.getQueryFieldData(cfId, prId);
         XsrfTokenGenerator xsrfTokenGenerator = ComponentManager.getComponentInstanceOfType(XsrfTokenGenerator.class);
         String atl_token = xsrfTokenGenerator.generateToken(req);
 
@@ -104,12 +103,12 @@ public class QueryFieldsService
         params.put("atl_token", atl_token);
         params.put("cfId", cfId);
         params.put("prId", prId);
-        params.put("data", data);
+        params.put("jqlData", qfMgr.getQueryFieldData(cfId, prId));
 
         try
         {
             String body = ComponentAccessor.getVelocityManager().getBody("templates/", "setjql.vm", params);
-            return Response.ok(new HtmlEntity(body)).status(500).build();
+            return Response.ok(new HtmlEntity(body)).build();
         }
         catch (VelocityException vex)
         {
