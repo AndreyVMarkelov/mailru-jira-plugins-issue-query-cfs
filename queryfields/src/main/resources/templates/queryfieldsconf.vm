@@ -20,7 +20,7 @@
               <table class="jiraform maxWidth">
                 <tr>
                   <td class="jiraformheader">
-                    $action.getText("1")
+                    <h3 class="formtitle">$action.getText("queryfields.linkingfields")</h3>
                   </td>
                 </tr>
                 <tr>
@@ -55,7 +55,7 @@
               <table class="jiraform maxWidth">
                 <tr>
                   <td class="jiraformheader">
-                    $action.getText("1")
+                    <h3 class="formtitle">$action.getText("queryfields.relatedfields")</h3>
                   </td>
                 </tr>
                 <tr>

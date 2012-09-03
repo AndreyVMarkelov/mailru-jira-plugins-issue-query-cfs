@@ -20,4 +20,19 @@ public interface Consts
      * Project name for global custom field.
      */
     String PROJECT_NAME_FOR_GLOBAL_CF = "";
+
+    /**
+     * Reverse linking part.
+     */
+    String REVERSE_LINK_PART = "rlink|";
+
+    /**
+     * Test JQL clause for reverve linked field.
+     */
+    String TEST_QUERY_PATTERN = "project = %s AND %s is not EMPTY";
+
+    /**
+     * Reverse linking JQL clause for reverve linked field.
+     */
+    String RLINK_QUERY_PATTERN = "project = %s AND %s = %s";
 }

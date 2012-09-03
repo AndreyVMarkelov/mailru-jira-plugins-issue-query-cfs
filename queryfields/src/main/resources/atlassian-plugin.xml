@@ -26,8 +26,8 @@
         <resource type="velocity" name="edit" location="templates/edit-linkerfield.vm"/>
     </customfield-type>
 
-    <customfield-type key="mailru-linked-field" name="Mail.Ru Linked Field" class="ru.mail.jira.plugins.lf.LinkedField">
-        <description>Mail.Ru Linked Field</description>
+    <customfield-type key="mailru-linked-field" name="Mail.Ru Related Field" class="ru.mail.jira.plugins.lf.LinkedField">
+        <description>Mail.Ru Related Field</description>
         <resource type="velocity" name="view" location="templates/view-linkedfield.vm"/>
         <resource type="velocity" name="column-view" location="templates/view-linkedfield.vm"/>
         <resource type="velocity" name="xml" location="templates/view-linkedfield.vm"/>

@@ -7,6 +7,7 @@ package ru.mail.jira.plugins.lf;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -172,7 +173,38 @@ public class QueryFieldsService
 
         if (Utils.isValidStr(data))
         {
-            SearchService.ParseResult parseResult = searchService.parseQuery(user, data);
+            String jqlQuery = data;
+            if (data.startsWith(Consts.REVERSE_LINK_PART))
+            {
+                String reserveData = data.substring(Consts.REVERSE_LINK_PART.length());
+                int inx = reserveData.indexOf("|");
+                if (inx < 0)
+                {
+                    Set<String> errs = new TreeSet<String>();
+                    errs.add(i18n.getText("queryfields.error.rlinkerror"));
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("errs", errs);
+                    params.put("i18n", i18n);
+
+                    try
+                    {
+                        String body = ComponentAccessor.getVelocityManager().getBody("templates/", "conferr.vm", params);
+                        return Response.ok(new HtmlEntity(body)).status(500).build();
+                    }
+                    catch (VelocityException vex)
+                    {
+                        log.error("QueryFieldsService::setJcl - Velocity parsing error", vex);
+                        return Response.ok(i18n.getText("queryfields.error.internalerror")).status(500).build();
+                    }
+                }
+
+                String proj = reserveData.substring(0, inx);
+                String cfName = reserveData.substring(inx + 1);
+
+                jqlQuery = String.format(Consts.TEST_QUERY_PATTERN, proj, cfName);
+            }
+
+            SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlQuery);
             if (parseResult.isValid())
             {
                 qfMgr.setQueryFieldData(cfId, prId, data);

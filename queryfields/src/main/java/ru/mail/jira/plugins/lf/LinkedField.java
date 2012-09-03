@@ -6,8 +6,7 @@ package ru.mail.jira.plugins.lf;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -93,20 +92,37 @@ public class LinkedField
         }
         params.put("jqlNotSet", Boolean.FALSE);
 
+        String jqlQuery = jqlData;
+        if (jqlData.startsWith(Consts.REVERSE_LINK_PART))
+        {
+            String reserveData = jqlData.substring(Consts.REVERSE_LINK_PART.length());
+            int inx = reserveData.indexOf("|");
+            if (inx < 0)
+            {
+                params.put("jqlNotValid", Boolean.TRUE);
+                return params;
+            }
+
+            String proj = reserveData.substring(0, inx);
+            String cfName = reserveData.substring(inx + 1);
+
+            jqlQuery = String.format(Consts.RLINK_QUERY_PATTERN, proj, cfName, issue.getKey());
+        }
+
         User user = ComponentManager.getInstance().getJiraAuthenticationContext().getLoggedInUser();
-        SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlData);
+        SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlQuery);
         if (parseResult.isValid())
         {
             params.put("jqlNotValid", Boolean.FALSE);
             Query query = parseResult.getQuery();
             try
             {
-                Set<String> cfVals = new TreeSet<String>();
+                Map<String, String> cfVals = new TreeMap<String, String>();
                 SearchResults results = searchService.search(user, query, PagerFilter.getUnlimitedFilter());
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)
                 {
-                    cfVals.add(i.getKey());
+                    cfVals.put(i.getKey(), i.getSummary());
                 }
                 params.put("isError", Boolean.FALSE);
                 params.put("cfVals", cfVals);

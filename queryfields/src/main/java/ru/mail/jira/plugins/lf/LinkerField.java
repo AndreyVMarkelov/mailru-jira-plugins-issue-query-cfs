@@ -6,8 +6,7 @@ package ru.mail.jira.plugins.lf;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -101,12 +100,12 @@ public class LinkerField
             Query query = parseResult.getQuery();
             try
             {
-                Set<String> cfVals = new TreeSet<String>();
+                Map<String, String> cfVals = new TreeMap<String, String>();
                 SearchResults results = searchService.search(user, query, PagerFilter.getUnlimitedFilter());
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)
                 {
-                    cfVals.add(i.getKey());
+                    cfVals.put(i.getKey(), i.getSummary());
                 }
                 params.put("isError", Boolean.FALSE);
                 params.put("cfVals", cfVals);
