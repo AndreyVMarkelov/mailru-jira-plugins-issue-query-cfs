@@ -5,12 +5,14 @@ $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfi
 <label>$i18n.getText("queryfields.field.error")</label>
 #else
 <div class="multirowdiv">
-<table width="100%" height="100%">
+<table width="100%" valign="top">
 <tbody>
 #foreach($val in $cfVals.entrySet())
-  <tr><td>
-  <a href="$baseUrl/browse/$val.key">$val.key: $val.value</a>
-  </td></tr>
+  <tr>
+    <td valign="top">
+      <a href="$baseUrl/browse/$val.key">$val.key: $val.value</a>
+    </td>
+  </tr>
 #end
 </tbody>
 </table>
