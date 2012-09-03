@@ -2,5 +2,5 @@
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrsc")
 #if($value)
-<a href="$baseUrl/browse/$value">$value</a>
+<a href="$baseUrl/browse/$value">${value}#if($fullValue): $fullValue#end</a>
 #end

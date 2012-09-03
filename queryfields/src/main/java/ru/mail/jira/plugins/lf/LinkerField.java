@@ -11,6 +11,8 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.customfields.SortableCustomField;
 import com.atlassian.jira.issue.customfields.impl.TextCFType;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
@@ -44,17 +46,24 @@ public class LinkerField
     private final SearchService searchService;
 
     /**
+     * Issue manager.
+     */
+    private final IssueManager issueMgr;
+
+    /**
      * Constructor.
      */
     public LinkerField(
         CustomFieldValuePersister customFieldValuePersister,
         GenericConfigManager genericConfigManager,
         QueryFieldsMgr qfMgr,
-        SearchService searchService)
+        SearchService searchService,
+        IssueManager issueMgr)
     {
         super(customFieldValuePersister, genericConfigManager);
         this.qfMgr = qfMgr;
         this.searchService = searchService;
+        this.issueMgr = issueMgr;
     }
 
     @Override
@@ -85,6 +94,17 @@ public class LinkerField
         Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
         params.put("i18n", getI18nBean());
         params.put("baseUrl", Utils.getBaseUrl(JiraWebUtils.getHttpRequest()));
+
+        String cfValue = field.getValueFromIssue(issue);
+        if (Utils.isValidStr(cfValue))
+        {
+            MutableIssue mi = issueMgr.getIssueObject(cfValue);
+            if (mi != null && Utils.isValidStr(mi.getSummary()))
+            {
+                params.put("fullValue", mi.getSummary());
+            }
+        }
+
         if (!Utils.isValidStr(jqlData))
         {
             params.put("jqlNotSet", Boolean.TRUE);

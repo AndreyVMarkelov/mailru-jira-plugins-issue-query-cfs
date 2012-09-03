@@ -4,7 +4,15 @@ $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfi
 #if($jqlNotSet || $jqlNotValid)
 <label>$i18n.getText("queryfields.field.error")</label>
 #else
+<div class="multirowdiv">
+<table width="100%" height="100%">
+<tbody>
 #foreach($val in $cfVals.entrySet())
-  <a href="$baseUrl/browse/$val.key">$val.key</a>
+  <tr><td>
+  <a href="$baseUrl/browse/$val.key">$val.key: $val.value</a>
+  </td></tr>
 #end
+</tbody>
+</table>
+</div>
 #end

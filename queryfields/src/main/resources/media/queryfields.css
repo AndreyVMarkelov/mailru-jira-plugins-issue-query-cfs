@@ -14,3 +14,10 @@
     padding: 7px 7px 7px 7px;
     margin: 12px 12px 12px 12px;
 }
+
+.multirowdiv {
+    overflow:scroll;
+    height:80px;
+    width:100%;
+    overflow:auto;
+}
