@@ -26,7 +26,7 @@ import com.atlassian.query.operand.MultiValueOperand;
 import com.atlassian.query.operand.Operand;
 import com.atlassian.query.operand.SingleValueOperand;
 import com.atlassian.query.operator.Operator;
-import com.opensymphony.user.User;
+import com.atlassian.crowd.embedded.api.User;
 
 /**
  * Search input transformer.
@@ -54,7 +54,6 @@ public class LirkerFieldSearchInputTransformer
         this.jqlOperandResolver = jqlOperandResolver;
     }
 
-    @Override
     public boolean doRelevantClausesFitFilterForm(
         User searcher,
         Query query,
@@ -82,7 +81,6 @@ public class LirkerFieldSearchInputTransformer
         return false;
     }
 
-    @Override
     protected CustomFieldParams getParamsFromSearchRequest(
         User searcher,
         Query query,

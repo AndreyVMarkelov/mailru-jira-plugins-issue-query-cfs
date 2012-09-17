@@ -4,6 +4,8 @@
   <head>
     <title>$action.getText("queryfields.admin.title")</title>
     <meta name="decorator" content="admin"/>
+    <meta name="admin.active.section" content="admin_plugins_menu/mailru-admin-section">
+    <meta name="admin.active.tab" content="queryfields-configuration">
     $webResourceManager.requireResource("jira.webresources:global-static")
     $webResourceManager.requireResource("jira.webresources:jira-global")
     $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")

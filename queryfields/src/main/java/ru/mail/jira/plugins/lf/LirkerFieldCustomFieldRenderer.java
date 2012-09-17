@@ -12,7 +12,7 @@ import com.atlassian.jira.issue.search.searchers.impl.NamedTerminalClauseCollect
 import com.atlassian.jira.plugin.customfield.CustomFieldSearcherModuleDescriptor;
 import com.atlassian.jira.web.FieldVisibilityManager;
 import com.atlassian.query.Query;
-import com.opensymphony.user.User;
+import com.atlassian.crowd.embedded.api.User;
 
 /**
  * Custom field renderer.
@@ -38,7 +38,6 @@ public class LirkerFieldCustomFieldRenderer
         this.clauseNames = clauseNames;
     }
 
-    @Override
     public boolean isRelevantForQuery(
         User searcher,
         Query query)

@@ -22,3 +22,45 @@
     overflow:auto;
     position: relative;
 }
+
+.jiraform {
+    border: 1px solid #D2D2D2;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0 auto;
+}
+
+.jiraformbody {
+    padding: 5px 5px 10px 5px;
+}
+
+.maxWidth {
+    width: 99%;
+}
+
+.jiraformheader {
+    background-color: #F0F0F0;
+}
+
+.grid {
+    background-color: #FCFCFC;
+    border-collapse: collapse;
+    border: 1px solid #D2D2D2;
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+
+.grid th {
+    background-color: rgb(226, 226, 226);
+}
+
+.grid th, .grid td {
+    border: 1px solid #D2D2D2;
+    padding: 4px;
+    vertical-align: top;
+}
+
+.formtitle {
+    color: rgb(60, 120, 181);
+    font-size: 1.6em;
+}

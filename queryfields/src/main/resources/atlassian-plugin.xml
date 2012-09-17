@@ -8,7 +8,7 @@
     <!-- Resources -->
     <resource type="i18n" name="i18n" location="i18n.queryfields"/>
 
-    <web-resource key="queryfieldsrsc" name="Mail.Ru query CF resources">
+    <web-resource key="queryfieldsrsc" name="Query issues custom fields resources">
         <transformation extension="js">
             <transformer key="jsI18n"/>
         </transformation>
@@ -18,16 +18,16 @@
     <!-- End resources -->
 
     <!-- Custom fields -->
-    <customfield-type key="mailru-linker-field" name="Mail.Ru Linker Field" class="ru.mail.jira.plugins.lf.LinkerField">
-        <description>Mail.Ru Linker Field</description>
+    <customfield-type key="mailru-linker-field" name="Query issue linker custom field" class="ru.mail.jira.plugins.lf.LinkerField">
+        <description>This field is single select list of issue keys by JQL. This field can be used in searching and pie charts.</description>
         <resource type="velocity" name="view" location="templates/view-linkerfield.vm"/>
         <resource type="velocity" name="column-view" location="templates/view-linkerfield.vm"/>
         <resource type="velocity" name="xml" location="templates/view-linkerfield.vm"/>
         <resource type="velocity" name="edit" location="templates/edit-linkerfield.vm"/>
     </customfield-type>
 
-    <customfield-type key="mailru-linked-field" name="Mail.Ru Related Field" class="ru.mail.jira.plugins.lf.LinkedField">
-        <description>Mail.Ru Related Field</description>
+    <customfield-type key="mailru-linked-field" name="Query issue related custom field" class="ru.mail.jira.plugins.lf.LinkedField">
+        <description>This field is read only custom field with values of issue keys by JQL.</description>
         <resource type="velocity" name="view" location="templates/view-linkedfield.vm"/>
         <resource type="velocity" name="column-view" location="templates/view-linkedfield.vm"/>
         <resource type="velocity" name="xml" location="templates/view-linkedfield.vm"/>
@@ -35,24 +35,73 @@
     </customfield-type>
     <!-- End custom fields -->
 
-    <customfield-searcher key="mailru-linker-field-searcher" name="Linker Field custom field Searcher"
+    <customfield-searcher key="mailru-linker-field-searcher" name="Query issue linker custom field searcher"
                           i18n-name-key="mailru.selectcf.admin.seacrher" class="ru.mail.jira.plugins.lf.LirkerFieldSearcher">
-        <description>Allow searching for a Linker Field select custom field.</description>
+        <description>Allow searching for query issue linker custom field.</description>
         <resource type="velocity" name="label" location="templates/label-linkerfield.vm"/>
         <resource type="velocity" name="search" location="templates/search-linkerfield.vm"/>
         <resource type="velocity" name="view" location="templates/view-search-linkerfield.vm"/>
         <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-linker-field"/>
     </customfield-searcher>
 
-    <web-item key="queryfields-configuration" name="Query Issues Custom Fields configuration link" section="system.admin/globalsettings" weight="95">
+    <web-section key="mailru-admin-section_old" name="Mail.Ru Section" location="system.admin" weight="20">
+        <description>Mail.Ru Section Descitption</description>
+        <label key="queryfields.section"/>
+        <conditions type="AND">
+            <condition class="ru.mail.jira.plugins.lf.IsPriorToJiraVersion">
+                <param name="majorVersion">4</param>
+                <param name="minorVersion">4</param>
+            </condition>
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+                <param name="permission">admin</param>
+            </condition>
+        </conditions>
+    </web-section>
+
+    <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="system.admin/mailru-admin-section_old" weight="95">
         <label key="queryfields.admin.title"/>
-        <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-            <param name="permission">admin</param>
-        </condition>
-        <link linkId="queryfields-configuration_link">/secure/QueryConfigCfsConfig.jspa</link>
+        <conditions type="AND">
+            <condition class="ru.mail.jira.plugins.lf.IsPriorToJiraVersion">
+                <param name="majorVersion">4</param>
+                <param name="minorVersion">4</param>
+            </condition>
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+                <param name="permission">admin</param>
+            </condition>
+        </conditions>
+        <link linkId="queryfields-configuration_old">/secure/QueryConfigCfsConfig.jspa</link>
     </web-item>
 
-    <webwork1 key="queryfields_conf" name="Query Issues Custom Fields configuration" class="java.lang.Object">
+    <web-section key="mailru-admin-section" name="Mail.Ru Section" location="admin_plugins_menu"
+                 i18n-name-key="queryfields.section" weight="900">
+        <label key="queryfields.section"/>
+        <description>Mail.Ru Section Descitption</description>
+                <conditions type="AND">
+            <condition class="ru.mail.jira.plugins.lf.IsAtLeastJiraVersion">
+                <param name="majorVersion">4</param>
+                <param name="minorVersion">4</param>
+            </condition>
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+                <param name="permission">admin</param>
+            </condition>
+        </conditions>
+    </web-section>
+
+    <web-item key="queryfields-configuration" name="Query issues custom fields configuration link" section="admin_plugins_menu/mailru-admin-section" weight="95">
+        <label key="queryfields.admin.title"/>
+        <conditions type="AND">
+            <condition class="ru.mail.jira.plugins.lf.IsAtLeastJiraVersion">
+                <param name="majorVersion">4</param>
+                <param name="minorVersion">4</param>
+            </condition>
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+                <param name="permission">admin</param>
+            </condition>
+        </conditions>
+        <link linkId="queryfields-configuration">/secure/QueryConfigCfsConfig.jspa</link>
+    </web-item>
+
+    <webwork1 key="queryfields_conf" name="Query issues custom fields configuration" class="java.lang.Object">
         <actions>
             <action name="ru.mail.jira.plugins.lf.QueryFieldsConfig" alias="QueryConfigCfsConfig">
                 <view name="input">/templates/queryfieldsconf.vm</view>
@@ -61,7 +110,7 @@
         </actions>
     </webwork1>
 
-    <component key="queryfields-config" name="Query Issues Custom Fields Plug-In configuration" class="ru.mail.jira.plugins.lf.QueryFieldsMgrImpl"/>
+    <component key="queryfields-config" name="Query issues custom fields plugin configuration" class="ru.mail.jira.plugins.lf.QueryFieldsMgrImpl"/>
     <component-import key="pluginSettingsFactory">
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component-import>
@@ -71,7 +120,7 @@
 
     <!-- Rest resources -->
     <rest key="queryfieldsws" path="/queryfieldsws" version="1.0">
-        <description>Provides the REST resource for the Query Issues Custom Fields.</description>
+        <description>Provides the REST resource for query issues custom fields.</description>
     </rest>
     <!-- End rest -->
 </atlassian-plugin>
