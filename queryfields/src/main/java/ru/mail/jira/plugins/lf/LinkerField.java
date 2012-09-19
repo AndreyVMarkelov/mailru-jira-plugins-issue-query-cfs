@@ -81,6 +81,10 @@ public class LinkerField
         CustomField field,
         FieldLayoutItem fieldLayoutItem)
     {
+        Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
+        params.put("i18n", getI18nBean());
+        params.put("baseUrl", Utils.getBaseUrl(JiraWebUtils.getHttpRequest()));
+
         String jqlData = null;
         if (field.isAllProjects())
         {
@@ -88,12 +92,12 @@ public class LinkerField
         }
         else
         {
+            if (issue == null)
+            {
+                return params;
+            }
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
         }
-
-        Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
-        params.put("i18n", getI18nBean());
-        params.put("baseUrl", Utils.getBaseUrl(JiraWebUtils.getHttpRequest()));
 
         String cfValue = field.getValueFromIssue(issue);
         if (Utils.isValidStr(cfValue))
