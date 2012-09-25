@@ -127,9 +127,21 @@ public class LinkerField
 
                 if (addNull)
                 {
-                    cfVals.put("empty", " - ");
+                    cfVals.put("Empty", " - ");
                 }
 
+                String selected = "Empty";
+                String value = (String)params.get("value");
+                for (Map.Entry<String, String> cf : cfVals.entrySet())
+                {
+                    if (value != null && cf.getKey().equals(value))
+                    {
+                        selected = value;
+                        break;
+                    }
+                }
+
+                params.put("selected", selected);
                 params.put("isError", Boolean.FALSE);
                 params.put("cfVals", cfVals);
             }

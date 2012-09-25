@@ -2,7 +2,7 @@
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrsc")
 #if($value)
-#if($value == "empty")
+#if($value == "Empty")
 ${value}
 #else
 <a href='$baseUrl/browse/$value'>${value}#if($fullValue): $fullValue#end</a>
