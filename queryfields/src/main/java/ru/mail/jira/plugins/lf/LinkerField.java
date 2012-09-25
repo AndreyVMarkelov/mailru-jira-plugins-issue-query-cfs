@@ -131,12 +131,12 @@ public class LinkerField
                 }
 
                 String selected = "Empty";
-                String value = (String)params.get("value");
+                String value = (String)issue.getCustomFieldValue(field);
                 for (Map.Entry<String, String> cf : cfVals.entrySet())
                 {
+                    selected = cf.getKey();
                     if (value != null && cf.getKey().equals(value))
                     {
-                        selected = value;
                         break;
                     }
                 }

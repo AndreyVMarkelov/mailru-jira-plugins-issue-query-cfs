@@ -7,7 +7,7 @@
 <input type="hidden" name="$customField.id" value="$selected" id="$customField.id" class="textfield" readonly="readonly"/>
 <select id="mailsel$customField.id" name="mailsel$customField.id" onchange="setValue('mailsel$customField.id', '$customField.id');">
   #foreach($val in $cfVals.entrySet())
-  <option value="$val.key" #if($value && $val.key == $value)selected#end>#if($val.key == "Empty")$val.value#else$val.key: $val.value#end</option>
+  <option value="$val.key" #if($val.key == $selected)selected#end>#if($val.key == "Empty")$val.value#else$val.key: $val.value#end</option>
   #end
 </select>
 #end
