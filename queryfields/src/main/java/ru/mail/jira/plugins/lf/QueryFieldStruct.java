@@ -37,6 +37,11 @@ public class QueryFieldStruct
     private long projectId;
 
     /**
+     * Add null option.
+     */
+    private boolean isAddNull;
+
+    /**
      * Project name.
      */
     private String projectName;
@@ -50,7 +55,8 @@ public class QueryFieldStruct
         String descr,
         long projectId,
         String projectName,
-        String data)
+        String data,
+        boolean isAddNull)
     {
         this.cfId = cfId;
         this.name = name;
@@ -58,6 +64,7 @@ public class QueryFieldStruct
         this.projectId = projectId;
         this.projectName = projectName;
         this.data = data;
+        this.isAddNull = isAddNull;
     }
 
     public long getCfId()
@@ -90,11 +97,16 @@ public class QueryFieldStruct
         return projectName;
     }
 
+    public boolean isAddNull()
+    {
+        return isAddNull;
+    }
+
     @Override
     public String toString()
     {
         return "QueryFieldStruct[cfId=" + cfId + ", descr=" + descr
             + ", name=" + name + ", projectId=" + projectId
-            + ", projectName=" + projectName + ", data=" + data + "]";
+            + ", projectName=" + projectName + ", data=" + data + ", isAddNull=" + isAddNull + "]";
     }
 }

@@ -7,6 +7,12 @@
     <input type="hidden" name="prId" value="$prId"/>
     <div class="field-group">
         <label for="jqlclause">$i18n.getText("queryfields.jqlclause")<span class="aui-icon icon-required"></label>
-        <textarea rows="3" cols="30" id="jqlclause" name="jqlclause">#if($jqlData)$jqlData#end</textarea>
+        <textarea rows="5" cols="30" id="jqlclause" name="jqlclause">#if($jqlData)$jqlData#end</textarea>
     </div>
+    #if($type == "1")
+    <div class="field-group">
+        <label for="jqlnull">$i18n.getText("queryfields.allowempty")<span class="aui-icon icon-required"></label>
+        <input type="checkbox" id="jqlnull" name="jqlnull" #if($jqlnull)checked="checked"#end/>
+    </div>
+    #end
 </form>

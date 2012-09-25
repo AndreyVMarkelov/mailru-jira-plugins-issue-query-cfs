@@ -18,7 +18,6 @@ import com.atlassian.jira.issue.customfields.impl.TextCFType;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
 import com.atlassian.jira.issue.customfields.persistence.CustomFieldValuePersister;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
@@ -67,15 +66,6 @@ public class LinkerField
     }
 
     @Override
-    public int compare(
-        String customFieldObjectValue1,
-        String customFieldObjectValue2,
-        FieldConfig fieldConfig)
-    {
-        return super.compare(customFieldObjectValue1, customFieldObjectValue2, fieldConfig);
-    }
-
-    @Override
     public Map<String, Object> getVelocityParameters(
         Issue issue,
         CustomField field,
@@ -86,9 +76,11 @@ public class LinkerField
         params.put("baseUrl", Utils.getBaseUrl(JiraWebUtils.getHttpRequest()));
 
         String jqlData = null;
+        boolean addNull = false;
         if (field.isAllProjects())
         {
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            addNull = qfMgr.getAddNull(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
         }
         else
         {
@@ -97,6 +89,7 @@ public class LinkerField
                 return params;
             }
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
+            addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
         }
 
         String cfValue = field.getValueFromIssue(issue);
@@ -131,6 +124,12 @@ public class LinkerField
                 {
                     cfVals.put(i.getKey(), i.getSummary());
                 }
+
+                if (addNull)
+                {
+                    cfVals.put("empty", " - ");
+                }
+
                 params.put("isError", Boolean.FALSE);
                 params.put("cfVals", cfVals);
             }

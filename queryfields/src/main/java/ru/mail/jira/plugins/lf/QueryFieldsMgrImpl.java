@@ -47,11 +47,24 @@ public class QueryFieldsMgrImpl
     }
 
     @Override
+    public boolean getAddNull(long cfId, long projId)
+    {
+        String addNull = (String)pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).get(createPropKey(cfId, projId).concat(".addnull"));
+        return Boolean.parseBoolean(addNull);
+    }
+
+    @Override
     public String getQueryFieldData(
         long cfId,
         long projId)
     {
         return (String)pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).get(createPropKey(cfId, projId));
+    }
+
+    @Override
+    public void setAddNull(long cfId, long projId, boolean data)
+    {
+        pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).put(createPropKey(cfId, projId).concat(".addnull"), Boolean.toString(data));
     }
 
     @Override

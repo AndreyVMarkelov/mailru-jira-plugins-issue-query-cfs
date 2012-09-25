@@ -30,19 +30,21 @@
                     <table class="grid maxWidth">
                       <thead>
                         <tr>
-                          <th width="15%">$action.getText("queryfields.admin.cfname")</th>
-                          <th width="15%">$action.getText("queryfields.admin.project")</th>
-                          <th width="55%">$action.getText("queryfields.admin.jql")</th>
-                          <th width="15%">$action.getText("queryfields.admin.action")</th>
+                          <th width="12%">$action.getText("queryfields.admin.cfname")</th>
+                          <th width="12%">$action.getText("queryfields.admin.project")</th>
+                          <th width="50%">$action.getText("queryfields.admin.jql")</th>
+                          <th width="12%">$action.getText("queryfields.allowempty")</th>
+                          <th width="12%">$action.getText("queryfields.admin.action")</th>
                         </tr>
                       </thead>
                       <tbody>
                       #foreach($lrFields in $action.getCfData().getLinkerFields())
                         <tr>
-                          <td width="15%">$lrFields.getName()</td>
-                          <td width="15%">$lrFields.getProjectName()</td>
-                          <td width="55%">#if($lrFields.getData())$lrFields.getData()#end</td>
-                          <td width="15%"><a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId());">$action.getText("queryfields.admin.action.confugure")</a></td>
+                          <td width="12%">$lrFields.getName()</td>
+                          <td width="12%">$lrFields.getProjectName()</td>
+                          <td width="50%">#if($lrFields.getData())$lrFields.getData()#end</td>
+                          <td width="12%"><input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
+                          <td width="12%"><a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a></td>
                         </tr>
                       #end
                       </tbody>
@@ -77,7 +79,7 @@
                           <td width="15%">$ldFields.getName()</td>
                           <td width="15%">$ldFields.getProjectName()</td>
                           <td width="55%">#if($ldFields.getData())$ldFields.getData()#end</td>
-                          <td width="15%"><a href="#" onclick="configureJql(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId());">$action.getText("queryfields.admin.action.confugure")</a></td>
+                          <td width="15%"><a href="#" onclick="configureJql(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId(), 0);">$action.getText("queryfields.admin.action.confugure")</a></td>
                         </tr>
                       #end
                       </tbody>

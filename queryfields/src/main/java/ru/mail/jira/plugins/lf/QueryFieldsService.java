@@ -76,7 +76,8 @@ public class QueryFieldsService
 
         String cfIdStr = req.getParameter("cfId");
         String prIdStr = req.getParameter("prId");
-        if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr))
+        String type = req.getParameter("type");
+        if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr) || !Utils.isValidStr(type))
         {
             log.error("QueryFieldsService::initJclDialog - Required parameters are not set");
             return Response.ok(i18n.getText("queryfields.error.notrequiredparms")).status(500).build();
@@ -104,7 +105,9 @@ public class QueryFieldsService
         params.put("atl_token", atl_token);
         params.put("cfId", cfId);
         params.put("prId", prId);
+        params.put("type", type);
         params.put("jqlData", qfMgr.getQueryFieldData(cfId, prId));
+        params.put("jqlnull", qfMgr.getAddNull(cfId, prId));
 
         try
         {
@@ -152,6 +155,7 @@ public class QueryFieldsService
         String cfIdStr = req.getParameter("cfId");
         String prIdStr = req.getParameter("prId");
         String data = req.getParameter("jqlclause");
+        String jqlnull = req.getParameter("jqlnull");
         if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr))
         {
             log.error("QueryFieldsService::setJcl - Required parameters are not set");
@@ -208,6 +212,14 @@ public class QueryFieldsService
             if (parseResult.isValid())
             {
                 qfMgr.setQueryFieldData(cfId, prId, data);
+                if (Utils.isValidStr(jqlnull) && jqlnull.equals("on"))
+                {
+                    qfMgr.setAddNull(cfId, prId, true);
+                }
+                else
+                {
+                    qfMgr.setAddNull(cfId, prId, false);
+                }
             }
             else
             {
@@ -232,6 +244,14 @@ public class QueryFieldsService
         else
         {
             qfMgr.setQueryFieldData(cfId, prId, "");
+            if (Utils.isValidStr(jqlnull) && jqlnull.equals("on"))
+            {
+                qfMgr.setAddNull(cfId, prId, true);
+            }
+            else
+            {
+                qfMgr.setAddNull(cfId, prId, false);
+            }
         }
 
         return Response.ok().build();

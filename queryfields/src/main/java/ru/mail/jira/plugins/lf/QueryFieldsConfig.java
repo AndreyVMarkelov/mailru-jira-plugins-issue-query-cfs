@@ -60,7 +60,8 @@ public class QueryFieldsConfig
                         cf.getDescription(),
                         Consts.PROJECT_ID_FOR_GLOBAL_CF,
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
-                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addLinkerField(qfs);
                 }
                 else
@@ -77,7 +78,8 @@ public class QueryFieldsConfig
                             cf.getDescription(),
                             projId,
                             projName,
-                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId));
+                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
+                            qfMgr.getAddNull(cf.getIdAsLong(), projId));
                         cfData.addLinkerField(qfs);
                     }
                 }
@@ -92,7 +94,8 @@ public class QueryFieldsConfig
                         cf.getDescription(),
                         Consts.PROJECT_ID_FOR_GLOBAL_CF,
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
-                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addLinkedField(qfs);
                 }
                 else
@@ -109,7 +112,8 @@ public class QueryFieldsConfig
                             cf.getDescription(),
                             projId,
                             projName,
-                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId));
+                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
+                            qfMgr.getAddNull(cf.getIdAsLong(), projId));
                         cfData.addLinkedField(qfs);
                     }
                 }

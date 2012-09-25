@@ -8,14 +8,14 @@ jQuery(document).ready(function() {
 });
 
 //--> initialize dialog
-function initJqlDlg(baseUrl, cfId, prId)
+function initJqlDlg(baseUrl, cfId, prId, type)
 {
     var res = "";
     jQuery.ajax({
         url: baseUrl + "/rest/queryfieldsws/1.0/queryfieldssrv/initjqldlg",
         type: "POST",
         dataType: "json",
-        data: {"cfId": cfId, "prId": prId},
+        data: {"cfId": cfId, "prId": prId, "type": type},
         async: false,
         error: function(xhr, ajaxOptions, thrownError) {
             try {
@@ -56,10 +56,10 @@ function initErrorDlg(bodyText) {
 }
 
 //--> configure Jql for plugIn custom field
-function configureJql(event, baseUrl, cfId, prId) {
+function configureJql(event, baseUrl, cfId, prId, type) {
     event.preventDefault();
 
-    var dialogBody = initJqlDlg(baseUrl, cfId, prId);
+    var dialogBody = initJqlDlg(baseUrl, cfId, prId, type);
     if (!dialogBody)
     {
         return;
@@ -107,4 +107,9 @@ function configureJql(event, baseUrl, cfId, prId) {
         md.hide();
     });
     md.show();
+}
+
+function setValue(idstr, cid) {
+    var val = AJS.$("#" + idstr + " :selected").val();
+    AJS.$("#" + cid).val(val);
 }

@@ -52,6 +52,7 @@
                 <param name="majorVersion">4</param>
                 <param name="minorVersion">4</param>
             </condition>
+            <condition class="ru.mail.jira.plugins.lf.SecCondition"/>
             <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
                 <param name="permission">admin</param>
             </condition>
@@ -81,6 +82,7 @@
                 <param name="majorVersion">4</param>
                 <param name="minorVersion">4</param>
             </condition>
+            <condition class="ru.mail.jira.plugins.lf.SecCondition"/>
             <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
                 <param name="permission">admin</param>
             </condition>
