@@ -130,7 +130,7 @@ public class LinkerField
                     cfVals.put("Empty", " - ");
                 }
 
-                String selected = "Empty";
+                String selected = "";
                 String value = (String)issue.getCustomFieldValue(field);
                 for (Map.Entry<String, String> cf : cfVals.entrySet())
                 {
