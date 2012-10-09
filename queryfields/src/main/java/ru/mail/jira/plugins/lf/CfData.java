@@ -25,11 +25,17 @@ public class CfData
     private final List<QueryFieldStruct> linkerFields;
 
     /**
+     * Multi linker fields.
+     */
+    private final List<QueryFieldStruct> multiFields;
+
+    /**
      * Constructor.
      */
     public CfData()
     {
         this.linkerFields = new LinkedList<QueryFieldStruct>();
+        this.multiFields = new LinkedList<QueryFieldStruct>();
         this.linkedFields = new LinkedList<QueryFieldStruct>();
     }
 
@@ -43,6 +49,11 @@ public class CfData
         linkerFields.add(qfs);
     }
 
+    public void addMultiFields(QueryFieldStruct qfs)
+    {
+        multiFields.add(qfs);
+    }
+
     public List<QueryFieldStruct> getLinkedFields()
     {
         return linkedFields;
@@ -53,9 +64,15 @@ public class CfData
         return linkerFields;
     }
 
+    public List<QueryFieldStruct> getMultiFields()
+    {
+        return multiFields;
+    }
+
     @Override
     public String toString()
     {
-        return "CfData[linkerFields=" + linkerFields + ", linkedFields=" + linkedFields + "]";
+        return "CfData[linkerFields=" + linkerFields + ", linkedFields=" + linkedFields +
+            ", multiFields=" + multiFields + "]";
     }
 }

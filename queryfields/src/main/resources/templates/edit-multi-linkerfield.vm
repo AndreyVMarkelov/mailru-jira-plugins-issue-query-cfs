@@ -1,0 +1,16 @@
+## Created by Andrey Markelov 05-10-2012.
+## Copyright Mail.Ru Group 2012. All rights reserved.
+#customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
+#if($jqlNotSet || $jqlNotValid)
+<input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+#else
+#if ($value)
+    #set ($selectedValues = $value)
+#end
+<select class="select" id="$customField.id" multiple="multiple" name="$customField.id" size="5">
+    #foreach($val in $cfVals.entrySet())
+       <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">#if($val.key == "Empty")$val.value#else$val.key: $val.value#end</option>
+    #end
+</select>
+#end
+#customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)

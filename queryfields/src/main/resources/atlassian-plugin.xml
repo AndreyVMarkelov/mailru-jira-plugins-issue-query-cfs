@@ -27,6 +27,14 @@
         <resource type="velocity" name="edit" location="templates/edit-linkerfield.vm"/>
     </customfield-type>
 
+    <customfield-type key="mailru-multi-linker-field" name="Query issue multi linker custom field" class="ru.mail.jira.plugins.lf.LinkerMultiField">
+        <description>This field is multi select list of issue keys by JQL.</description>
+        <resource type="velocity" name="view" location="templates/view-multi-linkerfield.vm"/>
+        <resource type="velocity" name="column-view" location="templates/view-multi-linkerfield.vm"/>
+        <resource type="velocity" name="xml" location="templates/view-multi-linkerfield.vm"/>
+        <resource type="velocity" name="edit" location="templates/edit-multi-linkerfield.vm"/>
+    </customfield-type>
+
     <customfield-type key="mailru-linked-field" name="Query issue related custom field" class="ru.mail.jira.plugins.lf.LinkedField">
         <description>This field is read only custom field with values of issue keys by JQL.</description>
         <resource type="velocity" name="view" location="templates/view-linkedfield.vm"/>

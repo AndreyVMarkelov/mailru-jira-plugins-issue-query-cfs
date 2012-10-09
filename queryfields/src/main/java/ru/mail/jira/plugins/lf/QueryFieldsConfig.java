@@ -118,6 +118,40 @@ public class QueryFieldsConfig
                     }
                 }
             }
+            else if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-multi-linker-field"))
+            {
+                if (cf.isAllProjects())
+                {
+                    QueryFieldStruct qfs = new QueryFieldStruct(
+                        cf.getIdAsLong(),
+                        cf.getName(),
+                        cf.getDescription(),
+                        Consts.PROJECT_ID_FOR_GLOBAL_CF,
+                        Consts.PROJECT_NAME_FOR_GLOBAL_CF,
+                        qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                    cfData.addMultiFields(qfs);
+                }
+                else
+                {
+                    List<GenericValue> projs = cf.getAssociatedProjects();
+                    for (GenericValue proj : projs)
+                    {
+                        Long projId = (Long) proj.get("id");
+                        String projName = (String) proj.get("name");
+
+                        QueryFieldStruct qfs = new QueryFieldStruct(
+                            cf.getIdAsLong(),
+                            cf.getName(),
+                            cf.getDescription(),
+                            projId,
+                            projName,
+                            qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
+                            qfMgr.getAddNull(cf.getIdAsLong(), projId));
+                        cfData.addMultiFields(qfs);
+                    }
+                }
+            }
         }
     }
 
