@@ -5,12 +5,13 @@
 package ru.mail.jira.plugins.lf;
 
 import static java.util.Collections.emptySet;
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
@@ -275,7 +276,7 @@ public class LinkerMultiField
             addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
         }
 
-        Map<String, String> setVals = new TreeMap<String, String>();
+        Map<String, String> setVals = new LinkedHashMap<String, String>();
         List<String> selVals = (List<String>)issue.getCustomFieldValue(field);
         if (selVals != null)
         {
@@ -305,7 +306,7 @@ public class LinkerMultiField
             com.atlassian.query.Query query = parseResult.getQuery();
             try
             {
-                Map<String, String> cfVals = new TreeMap<String, String>();
+                Map<String, String> cfVals = new LinkedHashMap<String, String>();
                 SearchResults results = searchService.search(user, query, PagerFilter.getUnlimitedFilter());
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)

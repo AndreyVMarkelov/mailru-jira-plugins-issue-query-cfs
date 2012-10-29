@@ -4,9 +4,9 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -117,7 +117,7 @@ public class LinkerField
             Query query = parseResult.getQuery();
             try
             {
-                Map<String, String> cfVals = new TreeMap<String, String>();
+                Map<String, String> cfVals = new LinkedHashMap<String, String>();
                 SearchResults results = searchService.search(user, query, PagerFilter.getUnlimitedFilter());
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)
@@ -134,13 +134,16 @@ public class LinkerField
                 String value = (String)issue.getCustomFieldValue(field);
                 for (Map.Entry<String, String> cf : cfVals.entrySet())
                 {
-                    selected = cf.getKey();
                     if (value != null && cf.getKey().equals(value))
                     {
                         break;
                     }
                 }
 
+                if (cfVals != null && !cfVals.isEmpty())
+                {
+                    selected = cfVals.keySet().iterator().next();
+                }
                 params.put("selected", selected);
                 params.put("isError", Boolean.FALSE);
                 params.put("cfVals", cfVals);
