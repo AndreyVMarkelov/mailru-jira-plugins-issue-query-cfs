@@ -109,7 +109,7 @@ function configureJql(event, baseUrl, cfId, prId, type) {
     md.show();
 }
 
-function setValue(idstr, cid) {
+function setQueryFieldValue(idstr, cid) {
     var val = AJS.$("#" + idstr + " :selected").val();
     AJS.$("#" + cid).val(val);
 }

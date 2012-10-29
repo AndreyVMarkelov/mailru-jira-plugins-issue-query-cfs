@@ -2,7 +2,11 @@
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-logo">/media/magnifer.png</param>
+        <param name="plugin-icon">/media/magnifer.png</param>
+        <param name="vendor-icon">/media/icon.png</param>
+        <param name="vendor-logo">/media/logo.png</param>
     </plugin-info>
 
     <!-- Resources -->
