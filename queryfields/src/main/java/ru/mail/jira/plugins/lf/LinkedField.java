@@ -111,6 +111,13 @@ public class LinkedField
 
             jqlQuery = String.format(Consts.RLINK_QUERY_PATTERN, proj, cfName, issue.getKey());
         }
+        else
+        {
+            if (jqlQuery.contains("RLINK"))
+            {
+                jqlQuery = jqlQuery.replace("RLINK", issue.getKey());
+            }
+        }
 
         User user = ComponentManager.getInstance().getJiraAuthenticationContext().getLoggedInUser();
         SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlQuery);
