@@ -1,0 +1,5 @@
+#if($value)
+#foreach ($selVal in $setVals.entrySet())
+<a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.key}</a>#if($velocityCount != $setVals.size()), #end
+#end
+#end

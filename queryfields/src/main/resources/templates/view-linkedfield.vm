@@ -10,7 +10,7 @@ $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfi
 #foreach($val in $cfVals.entrySet())
   <tr>
     <td valign="top">
-      <a href="$baseUrl/browse/$val.key">$val.key: $val.value</a>
+      <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.key: $val.value</a>
     </td>
   </tr>
 #end

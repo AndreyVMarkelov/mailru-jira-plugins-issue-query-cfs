@@ -5,7 +5,6 @@
 package ru.mail.jira.plugins.lf;
 
 import static java.util.Collections.emptySet;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -49,7 +48,6 @@ import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.util.ErrorCollection;
-import com.atlassian.jira.util.JiraWebUtils;
 import com.atlassian.jira.util.NotNull;
 import com.atlassian.jira.web.bean.PagerFilter;
 
@@ -257,7 +255,6 @@ public class LinkerMultiField
         FieldLayoutItem fieldLayoutItem)
     {
         Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
-        params.put("baseUrl", Utils.getBaseUrl(JiraWebUtils.getHttpRequest()));
 
         String jqlData = null;
         boolean addNull = false;

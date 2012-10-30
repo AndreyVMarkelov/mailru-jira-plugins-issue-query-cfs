@@ -20,7 +20,6 @@ import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
-import com.atlassian.jira.util.JiraWebUtils;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
 
@@ -74,7 +73,6 @@ public class LinkedField
     {
         Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
         params.put("i18n", getI18nBean());
-        params.put("baseUrl", Utils.getBaseUrl(JiraWebUtils.getHttpRequest()));
 
         String jqlData = null;
         if (field.isAllProjects())

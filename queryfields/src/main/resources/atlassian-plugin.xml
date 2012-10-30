@@ -22,24 +22,24 @@
     <customfield-type key="mailru-linker-field" name="Query issue linker custom field" class="ru.mail.jira.plugins.lf.LinkerField">
         <description>This field is single select list of issue keys by JQL. This field can be used in searching and pie charts.</description>
         <resource type="velocity" name="view" location="templates/view-linkerfield.vm"/>
-        <resource type="velocity" name="column-view" location="templates/view-linkerfield.vm"/>
-        <resource type="velocity" name="xml" location="templates/view-linkerfield.vm"/>
+        <resource type="velocity" name="column-view" location="templates/column-view-linkerfield.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml-linkerfield.vm"/>
         <resource type="velocity" name="edit" location="templates/edit-linkerfield.vm"/>
     </customfield-type>
 
     <customfield-type key="mailru-multi-linker-field" name="Query issue multi linker custom field" class="ru.mail.jira.plugins.lf.LinkerMultiField">
         <description>This field is multi select list of issue keys by JQL.</description>
         <resource type="velocity" name="view" location="templates/view-multi-linkerfield.vm"/>
-        <resource type="velocity" name="column-view" location="templates/view-multi-linkerfield.vm"/>
-        <resource type="velocity" name="xml" location="templates/view-multi-linkerfield.vm"/>
+        <resource type="velocity" name="column-view" location="templates/column-view-multi-linkerfield.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml-multi-linkerfield.vm"/>
         <resource type="velocity" name="edit" location="templates/edit-multi-linkerfield.vm"/>
     </customfield-type>
 
     <customfield-type key="mailru-linked-field" name="Query issue related custom field" class="ru.mail.jira.plugins.lf.LinkedField">
         <description>This field is read only custom field with values of issue keys by JQL.</description>
         <resource type="velocity" name="view" location="templates/view-linkedfield.vm"/>
-        <resource type="velocity" name="column-view" location="templates/view-linkedfield.vm"/>
-        <resource type="velocity" name="xml" location="templates/view-linkedfield.vm"/>
+        <resource type="velocity" name="column-view" location="templates/column-view-linkedfield.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml-linkedfield.vm"/>
         <resource type="velocity" name="edit" location="templates/edit-linkedfield.vm"/>
     </customfield-type>
     <!-- End custom fields -->
