@@ -19,6 +19,7 @@
         <resource type="download" name="mailrusel.css" location="media/queryfields.css"/>
         <resource type="download" name="mailrusel.js" location="media/queryfields.js"/>
         <context>atl.general</context>
+        <context>atl.admin</context>
     </web-resource>
     <!-- End resources -->
 

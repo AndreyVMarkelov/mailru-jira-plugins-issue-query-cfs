@@ -134,11 +134,21 @@ public class LinkerField
                 {
                     if (value != null && cf.getKey().equals(value))
                     {
+                        selected = value;
                         break;
                     }
                 }
 
-                if (cfVals != null && !cfVals.isEmpty())
+                if (selected.equals(""))
+                {
+                    String defaultValue = (String)field.getDefaultValue(issue);
+                    if (defaultValue != null && defaultValue.length() > 0 && cfVals.keySet().contains(defaultValue))
+                    {
+                        selected = defaultValue;
+                    }
+                }
+
+                if (cfVals != null && !cfVals.isEmpty() && selected.equals(""))
                 {
                     selected = cfVals.keySet().iterator().next();
                 }

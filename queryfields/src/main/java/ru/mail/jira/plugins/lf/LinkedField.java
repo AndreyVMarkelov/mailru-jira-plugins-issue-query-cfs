@@ -109,12 +109,20 @@ public class LinkedField
             String proj = reserveData.substring(0, inx);
             String cfName = reserveData.substring(inx + 1);
 
+            if (issue.getKey() == null)
+            {
+                return params;
+            }
             jqlQuery = String.format(Consts.RLINK_QUERY_PATTERN, proj, cfName, issue.getKey());
         }
         else
         {
             if (jqlQuery.contains("RLINK"))
             {
+                if (issue.getKey() == null)
+                {
+                    return params;
+                }
                 jqlQuery = jqlQuery.replace("RLINK", issue.getKey());
             }
         }
