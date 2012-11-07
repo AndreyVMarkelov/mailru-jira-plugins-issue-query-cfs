@@ -21,6 +21,10 @@
         <context>atl.general</context>
         <context>atl.admin</context>
     </web-resource>
+
+    <web-resource key="queryfieldsrscadmin" name="Query issues custom fields resources">
+        <resource type="download" name="queryfieldsadmin.js" location="media/queryfieldsadmin.js"/>
+    </web-resource>
     <!-- End resources -->
 
     <!-- Custom fields -->

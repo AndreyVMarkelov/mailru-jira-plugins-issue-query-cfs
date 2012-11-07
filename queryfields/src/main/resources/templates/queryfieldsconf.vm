@@ -10,7 +10,7 @@
     $webResourceManager.requireResource("jira.webresources:jira-global")
     $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
     $webResourceManager.requireResource("jira.webresources:autocomplete")
-    $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrsc")
+    $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrscadmin")
   </head>
   <body class="aui">
     #if($action.hasAdminPermission())
