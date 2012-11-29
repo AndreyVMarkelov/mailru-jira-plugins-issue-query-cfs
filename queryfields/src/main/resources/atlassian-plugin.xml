@@ -27,6 +27,16 @@
     </web-resource>
     <!-- End resources -->
 
+    <!-- Workflows -->
+    <workflow-validator key="depend-validator" name="Linked by field issues validator"
+                        class="ru.mail.jira.plugins.lf.SingleLinkedFieldValidatorFactory">
+        <description>This validator checks state of linked issues</description>
+        <validator-class>ru.mail.jira.plugins.lf.SingleLinkedFieldValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-depend-validator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-depend-validator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-depend-validator.vm"/>
+    </workflow-validator>
+
     <!-- Custom fields -->
     <customfield-type key="mailru-linker-field" name="Query issue linker custom field" class="ru.mail.jira.plugins.lf.LinkerField">
         <description>This field is single select list of issue keys by JQL. This field can be used in searching and pie charts.</description>
@@ -62,63 +72,12 @@
         <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-linker-field"/>
     </customfield-searcher>
 
-    <web-section key="mailru-admin-section_old" name="Mail.Ru Section" location="system.admin" weight="20">
-        <description>Mail.Ru Section Descitption</description>
-        <label key="queryfields.section"/>
-        <conditions type="AND">
-            <condition class="ru.mail.jira.plugins.lf.IsPriorToJiraVersion">
-                <param name="majorVersion">4</param>
-                <param name="minorVersion">4</param>
-            </condition>
-            <condition class="ru.mail.jira.plugins.lf.SecCondition"/>
-            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-                <param name="permission">admin</param>
-            </condition>
-        </conditions>
-    </web-section>
-
-    <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="system.admin/mailru-admin-section_old" weight="95">
+    <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="system.admin/globalsettings" weight="95">
         <label key="queryfields.admin.title"/>
-        <conditions type="AND">
-            <condition class="ru.mail.jira.plugins.lf.IsPriorToJiraVersion">
-                <param name="majorVersion">4</param>
-                <param name="minorVersion">4</param>
-            </condition>
-            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-                <param name="permission">admin</param>
-            </condition>
-        </conditions>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+            <param name="permission">admin</param>
+        </condition>
         <link linkId="queryfields-configuration_old">/secure/QueryConfigCfsConfig.jspa</link>
-    </web-item>
-
-    <web-section key="mailru-admin-section" name="Mail.Ru Section" location="admin_plugins_menu"
-                 i18n-name-key="queryfields.section" weight="900">
-        <label key="queryfields.section"/>
-        <description>Mail.Ru Section Descitption</description>
-                <conditions type="AND">
-            <condition class="ru.mail.jira.plugins.lf.IsAtLeastJiraVersion">
-                <param name="majorVersion">4</param>
-                <param name="minorVersion">4</param>
-            </condition>
-            <condition class="ru.mail.jira.plugins.lf.SecCondition"/>
-            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-                <param name="permission">admin</param>
-            </condition>
-        </conditions>
-    </web-section>
-
-    <web-item key="queryfields-configuration" name="Query issues custom fields configuration link" section="admin_plugins_menu/mailru-admin-section" weight="95">
-        <label key="queryfields.admin.title"/>
-        <conditions type="AND">
-            <condition class="ru.mail.jira.plugins.lf.IsAtLeastJiraVersion">
-                <param name="majorVersion">4</param>
-                <param name="minorVersion">4</param>
-            </condition>
-            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-                <param name="permission">admin</param>
-            </condition>
-        </conditions>
-        <link linkId="queryfields-configuration">/secure/QueryConfigCfsConfig.jspa</link>
     </web-item>
 
     <webwork1 key="queryfields_conf" name="Query issues custom fields configuration" class="java.lang.Object">
