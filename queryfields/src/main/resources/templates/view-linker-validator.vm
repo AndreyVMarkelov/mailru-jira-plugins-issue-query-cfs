@@ -2,6 +2,6 @@
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 <h4>$i18n.getText("queryfields.pf.header")</h4>
 <table>
-<tr><td>$i18n.getText("queryfields.pf.jql"): $jql</td></tr>
+<tr><td>$i18n.getText("queryfields.pf.linkerfield"): $realCf</td></tr>
 <tr><td>$i18n.getText("queryfields.pf.statuses"): $realStatuses</td></tr>
 </table>

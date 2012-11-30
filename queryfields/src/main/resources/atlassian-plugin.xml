@@ -28,13 +28,22 @@
     <!-- End resources -->
 
     <!-- Workflows -->
-    <workflow-validator key="depend-validator" name="Linked by field issues validator"
+    <workflow-validator key="linked-validator" name="Linked by field issues validator"
                         class="ru.mail.jira.plugins.lf.SingleLinkedFieldValidatorFactory">
         <description>This validator checks state of linked issues</description>
         <validator-class>ru.mail.jira.plugins.lf.SingleLinkedFieldValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-depend-validator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-depend-validator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-depend-validator.vm"/>
+    </workflow-validator>
+
+    <workflow-validator key="linker-validator" name="Linker field validator"
+                        class="ru.mail.jira.plugins.lf.SingleLinkerFieldValidatorFactory">
+        <description>This validator checks state of single linker field issue</description>
+        <validator-class>ru.mail.jira.plugins.lf.SingleLinkerFieldValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-linker-validator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-linker-validator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-linker-validator.vm"/>
     </workflow-validator>
 
     <!-- Custom fields -->
@@ -59,7 +68,6 @@
         <resource type="velocity" name="view" location="templates/view-linkedfield.vm"/>
         <resource type="velocity" name="column-view" location="templates/column-view-linkedfield.vm"/>
         <resource type="velocity" name="xml" location="templates/xml-linkedfield.vm"/>
-        <resource type="velocity" name="edit" location="templates/edit-linkedfield.vm"/>
     </customfield-type>
     <!-- End custom fields -->
 

@@ -1,3 +1,0 @@
-## Created by Andrey Markelov 29-08-2012.
-## Copyright Mail.Ru Group 2012. All rights reserved.
-<input type="hidden" name="$customField.id" value="-" id="$customField.id" class="textfield" readonly="readonly"/>

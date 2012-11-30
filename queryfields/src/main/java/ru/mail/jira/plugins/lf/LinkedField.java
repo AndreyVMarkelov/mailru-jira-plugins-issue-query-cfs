@@ -11,12 +11,10 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.customfields.SortableCustomField;
-import com.atlassian.jira.issue.customfields.impl.TextCFType;
-import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
-import com.atlassian.jira.issue.customfields.persistence.CustomFieldValuePersister;
+import com.atlassian.jira.issue.customfields.converters.StringConverterImpl;
+import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
+import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
@@ -29,8 +27,7 @@ import com.atlassian.query.Query;
  * @author Andrey Markelov
  */
 public class LinkedField
-    extends TextCFType
-    implements SortableCustomField<String>
+    extends CalculatedCFType
 {
     /**
      * PlugIn data manager.
@@ -46,23 +43,42 @@ public class LinkedField
      * Constructor.
      */
     public LinkedField(
-        CustomFieldValuePersister customFieldValuePersister,
-        GenericConfigManager genericConfigManager,
         QueryFieldsMgr qfMgr,
         SearchService searchService)
     {
-        super(customFieldValuePersister, genericConfigManager);
         this.qfMgr = qfMgr;
         this.searchService = searchService;
     }
 
     @Override
-    public int compare(
-        String customFieldObjectValue1,
-        String customFieldObjectValue2,
-        FieldConfig fieldConfig)
+    public Object getSingularObjectFromString(
+        final String string)
+    throws FieldValidationException
     {
-        return super.compare(customFieldObjectValue1, customFieldObjectValue2, fieldConfig);
+        return string;
+    }
+
+    @Override
+    public String getStringFromSingularObject(
+        final Object value)
+    {
+        assertObjectImplementsType(String.class, value);
+        return StringConverterImpl.convertNullToEmpty((String) value);
+    }
+
+    @Override
+    public Object getValueFromIssue(
+        CustomField field,
+        Issue issue)
+    {
+        if (issue != null && issue.getKey() != null)
+        {
+            return issue.getKey();
+        }
+        else
+        {
+            return "";
+        }
     }
 
     @Override

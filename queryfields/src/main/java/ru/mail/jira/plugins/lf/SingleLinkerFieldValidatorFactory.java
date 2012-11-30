@@ -6,12 +6,15 @@ package ru.mail.jira.plugins.lf;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginValidatorFactory;
@@ -19,18 +22,37 @@ import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ValidatorDescriptor;
 
 /**
- * Factory for validator that checks linked issues status.
+ * Factory for validator that checks single linker field issue.
  *
  * @author Andrey Markelov
  */
-public class SingleLinkedFieldValidatorFactory
+public class SingleLinkerFieldValidatorFactory
     extends AbstractWorkflowPluginFactory
     implements WorkflowPluginValidatorFactory
 {
     /**
      * Constructor.
      */
-    public SingleLinkedFieldValidatorFactory() {}
+    public SingleLinkerFieldValidatorFactory() {}
+
+    /**
+     * Get linker fields.
+     */
+    private Map<String, String> getCustomFields()
+    {
+        Map<String, String> res = new TreeMap<String, String>();
+
+        List<CustomField> cgList = ComponentManager.getInstance().getCustomFieldManager().getCustomFieldObjects();
+        for (CustomField cf : cgList)
+        {
+            if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linker-field"))
+            {
+                res.put(cf.getId(), cf.getName());
+            }
+        }
+
+        return res;
+    }
 
     @Override
     public Map<String, ?> getDescriptorParams(
@@ -38,13 +60,13 @@ public class SingleLinkedFieldValidatorFactory
     {
         Map<String, Object> map = new HashMap<String, Object>();
 
-        if (validatorParams != null && validatorParams.containsKey("jql"))
+        if (validatorParams != null && validatorParams.containsKey("cfId"))
         {
-            map.put("jql", extractSingleParam(validatorParams, "jql"));
+            map.put("cfId", extractSingleParam(validatorParams, "cfId"));
         }
         else
         {
-            map.put("jql", "");
+            map.put("cfId", "");
         }
 
         if (validatorParams != null && validatorParams.containsKey("invalid_statuses"))
@@ -141,8 +163,9 @@ public class SingleLinkedFieldValidatorFactory
         Map<String, Object> velocityParams,
         AbstractDescriptor descriptor)
     {
+        velocityParams.put("cfs", getCustomFields());
         velocityParams.put("statuses", getStatuses());
-        velocityParams.put("jql", getParam(descriptor, "jql"));
+        velocityParams.put("cfId", getParam(descriptor, "cfId"));
         velocityParams.put("invalid_statuses", getSetParams(descriptor, "invalid_statuses"));
     }
 
@@ -150,8 +173,9 @@ public class SingleLinkedFieldValidatorFactory
     protected void getVelocityParamsForInput(
         Map<String, Object> velocityParams)
     {
+        velocityParams.put("cfs", getCustomFields());
         velocityParams.put("statuses", getStatuses());
-        velocityParams.put("jql", "");
+        velocityParams.put("cfId", "");
         velocityParams.put("invalid_statuses", new TreeSet<String>());
     }
 
@@ -160,6 +184,17 @@ public class SingleLinkedFieldValidatorFactory
         Map<String, Object> velocityParams,
         AbstractDescriptor descriptor)
     {
+        String cfId = getParam(descriptor, "cfId");
+        String realCf = "";
+        if (cfId != null && cfId.length() > 0)
+        {
+            CustomField cfObj = ComponentManager.getInstance().getCustomFieldManager().getCustomFieldObject(cfId);
+            if (cfObj != null)
+            {
+                realCf = cfObj.getName();
+            }
+        }
+
         StringBuilder realStatuses = new StringBuilder();
         Set<String> statuses = getSetParams(descriptor, "invalid_statuses");
         for (String status : statuses)
@@ -175,7 +210,8 @@ public class SingleLinkedFieldValidatorFactory
             }
         }
 
-        velocityParams.put("jql", getParam(descriptor, "jql"));
+        velocityParams.put("cfId", getParam(descriptor, "cfId"));
+        velocityParams.put("realCf", realCf);
         velocityParams.put("invalid_statuses", getSetParams(descriptor, "invalid_statuses"));
         velocityParams.put("realStatuses", realStatuses.toString());
     }
