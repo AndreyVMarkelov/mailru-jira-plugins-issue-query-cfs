@@ -61,7 +61,8 @@ public class QueryFieldsConfig
                         Consts.PROJECT_ID_FOR_GLOBAL_CF,
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
-                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addLinkerField(qfs);
                 }
                 else
@@ -79,7 +80,8 @@ public class QueryFieldsConfig
                             projId,
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
-                            qfMgr.getAddNull(cf.getIdAsLong(), projId));
+                            qfMgr.getAddNull(cf.getIdAsLong(), projId),
+                            qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), projId));
                         cfData.addLinkerField(qfs);
                     }
                 }
@@ -95,7 +97,8 @@ public class QueryFieldsConfig
                         Consts.PROJECT_ID_FOR_GLOBAL_CF,
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
-                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        null);
                     cfData.addLinkedField(qfs);
                 }
                 else
@@ -113,7 +116,8 @@ public class QueryFieldsConfig
                             projId,
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
-                            qfMgr.getAddNull(cf.getIdAsLong(), projId));
+                            qfMgr.getAddNull(cf.getIdAsLong(), projId),
+                            null);
                         cfData.addLinkedField(qfs);
                     }
                 }
@@ -129,7 +133,8 @@ public class QueryFieldsConfig
                         Consts.PROJECT_ID_FOR_GLOBAL_CF,
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
-                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
+                        qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addMultiFields(qfs);
                 }
                 else
@@ -147,7 +152,8 @@ public class QueryFieldsConfig
                             projId,
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
-                            qfMgr.getAddNull(cf.getIdAsLong(), projId));
+                            qfMgr.getAddNull(cf.getIdAsLong(), projId),
+                            qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), projId));
                         cfData.addMultiFields(qfs);
                     }
                 }

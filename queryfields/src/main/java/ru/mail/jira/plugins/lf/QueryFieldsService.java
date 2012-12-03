@@ -4,7 +4,10 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -109,6 +112,18 @@ public class QueryFieldsService
         params.put("jqlData", qfMgr.getQueryFieldData(cfId, prId));
         params.put("jqlnull", qfMgr.getAddNull(cfId, prId));
 
+        if (type.equals("1"))
+        {
+            Map<String, String> map = new LinkedHashMap<String, String>();
+            map.put("key", "queryfields.opt.key");
+            map.put("status", "queryfields.opt.status");
+            map.put("assignee", "queryfields.opt.assignee");
+            map.put("due", "queryfields.opt.due");
+            map.put("priority", "queryfields.opt.priority");
+            params.put("options", map);
+            params.put("selectedOptions", qfMgr.getLinkeFieldsOptions(cfId, prId));
+        }
+
         try
         {
             String body = ComponentAccessor.getVelocityManager().getBody("templates/", "setjql.vm", params);
@@ -156,6 +171,7 @@ public class QueryFieldsService
         String prIdStr = req.getParameter("prId");
         String data = req.getParameter("jqlclause");
         String jqlnull = req.getParameter("jqlnull");
+        String[] options = req.getParameterValues("options");
         if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr))
         {
             log.error("QueryFieldsService::setJcl - Required parameters are not set");
@@ -220,6 +236,15 @@ public class QueryFieldsService
                 {
                     qfMgr.setAddNull(cfId, prId, false);
                 }
+                List<String> optList = new ArrayList<String>();
+                if (options != null)
+                {
+                    for (String option : options)
+                    {
+                        optList.add(option);
+                    }
+                }
+                qfMgr.setLinkerFieldOptions(cfId, prId, optList);
             }
             else
             {
@@ -252,6 +277,15 @@ public class QueryFieldsService
             {
                 qfMgr.setAddNull(cfId, prId, false);
             }
+            List<String> optList = new ArrayList<String>();
+            if (options != null)
+            {
+                for (String option : options)
+                {
+                    optList.add(option);
+                }
+            }
+            qfMgr.setLinkerFieldOptions(cfId, prId, optList);
         }
 
         return Response.ok().build();

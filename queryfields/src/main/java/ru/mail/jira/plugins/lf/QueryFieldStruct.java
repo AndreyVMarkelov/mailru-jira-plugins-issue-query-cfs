@@ -4,6 +4,8 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.util.List;
+
 /**
  * This structure keeps plugIn custom fields data for administration page rendering.
  * 
@@ -27,19 +29,24 @@ public class QueryFieldStruct
     private String descr;
 
     /**
+     * Add null option.
+     */
+    private boolean isAddNull;
+
+    /**
      * Custom field name.
      */
     private String name;
 
     /**
+     * Options.
+     */
+    private List<String> options;
+
+    /**
      * Project ID.
      */
     private long projectId;
-
-    /**
-     * Add null option.
-     */
-    private boolean isAddNull;
 
     /**
      * Project name.
@@ -56,7 +63,8 @@ public class QueryFieldStruct
         long projectId,
         String projectName,
         String data,
-        boolean isAddNull)
+        boolean isAddNull,
+        List<String> options)
     {
         this.cfId = cfId;
         this.name = name;
@@ -65,6 +73,7 @@ public class QueryFieldStruct
         this.projectName = projectName;
         this.data = data;
         this.isAddNull = isAddNull;
+        this.options = options;
     }
 
     public long getCfId()
@@ -87,6 +96,11 @@ public class QueryFieldStruct
         return name;
     }
 
+    public List<String> getOptions()
+    {
+        return options;
+    }
+
     public long getProjectId()
     {
         return projectId;
@@ -103,10 +117,9 @@ public class QueryFieldStruct
     }
 
     @Override
-    public String toString()
-    {
-        return "QueryFieldStruct[cfId=" + cfId + ", descr=" + descr
-            + ", name=" + name + ", projectId=" + projectId
-            + ", projectName=" + projectName + ", data=" + data + ", isAddNull=" + isAddNull + "]";
+    public String toString() {
+        return "QueryFieldStruct[cfId=" + cfId + ", data=" + data + ", descr="
+            + descr + ", name=" + name + ", projectId=" + projectId + ", isAddNull="
+            + isAddNull + ", options=" + options + ", projectName=" + projectName + "]";
     }
 }

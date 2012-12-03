@@ -10,6 +10,7 @@ import java.util.Map;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
@@ -75,10 +76,12 @@ public class LinkerField
 
         String jqlData = null;
         boolean addNull = false;
+        List<String> options = null;
         if (field.isAllProjects())
         {
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
             addNull = qfMgr.getAddNull(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
         }
         else
         {
@@ -88,6 +91,7 @@ public class LinkerField
             }
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
             addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
         }
 
         String cfValue = field.getValueFromIssue(issue);
@@ -96,7 +100,43 @@ public class LinkerField
             MutableIssue mi = issueMgr.getIssueObject(cfValue);
             if (mi != null && Utils.isValidStr(mi.getSummary()))
             {
-                params.put("fullValue", mi.getSummary());
+                StringBuilder sb = new StringBuilder();
+                if (options.contains("status"))
+                {
+                    sb.append(getI18nBean().getText("queryfields.opt.status")).append(": ").append(mi.getStatusObject().getName());
+                }
+                if (options.contains("assignee") && mi.getAssigneeUser() != null)
+                {
+                    if (sb.length() > 0)
+                    {
+                        sb.append(", ");
+                    }
+                    sb.append(getI18nBean().getText("queryfields.opt.assignee")).append(": ").append(mi.getAssigneeUser().getDisplayName());
+                }
+                if (options.contains("priority") && mi.getPriorityObject() != null)
+                {
+                    if (sb.length() > 0)
+                    {
+                        sb.append(", ");
+                    }
+                    sb.append(getI18nBean().getText("queryfields.opt.priority")).append(": ").append(mi.getPriorityObject().getName());
+                }
+                if (options.contains("due") && mi.getDueDate() != null)
+                {
+                    if (sb.length() > 0)
+                    {
+                        sb.append(", ");
+                    }
+                    sb.append(getI18nBean().getText("queryfields.opt.due")).append(": ").append(ComponentAccessor.getJiraAuthenticationContext().getOutlookDate().format(mi.getDueDate()));
+                }
+
+                if (sb.length() > 0)
+                {
+                    sb.insert(0, "(");
+                    sb.append(")");
+                }
+                String fullValue = mi.getSummary()  + " " + sb.toString();
+                params.put("fullValue", fullValue);
             }
         }
 
@@ -106,6 +146,12 @@ public class LinkerField
             return params;
         }
         params.put("jqlNotSet", Boolean.FALSE);
+        params.put("options", options);
+
+        if (options.contains("key"))
+        {
+            params.put("hasKey", Boolean.TRUE);
+        }
 
         User user = ComponentManager.getInstance().getJiraAuthenticationContext().getLoggedInUser();
         SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlData);

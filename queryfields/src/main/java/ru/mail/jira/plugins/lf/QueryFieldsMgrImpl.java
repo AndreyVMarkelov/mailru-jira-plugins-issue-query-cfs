@@ -4,6 +4,8 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 /**
@@ -54,6 +56,24 @@ public class QueryFieldsMgrImpl
     }
 
     @Override
+    public List<String> getLinkeFieldsOptions(
+        long cfId,
+        long projId)
+    {
+        String options = (String)pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).get(createPropKey(cfId, projId).concat(".options"));
+        if (options == null)
+        {
+            List<String> list = new ArrayList<String>();
+            list.add("key");
+            return list;
+        }
+        else
+        {
+            return Utils.stringToList(options);
+        }
+    }
+
+    @Override
     public String getQueryFieldData(
         long cfId,
         long projId)
@@ -65,6 +85,15 @@ public class QueryFieldsMgrImpl
     public void setAddNull(long cfId, long projId, boolean data)
     {
         pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).put(createPropKey(cfId, projId).concat(".addnull"), Boolean.toString(data));
+    }
+
+    @Override
+    public void setLinkerFieldOptions(
+        long cfId,
+        long projId,
+        List<String> options)
+    {
+        pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).put(createPropKey(cfId, projId).concat(".options"), Utils.listToString(options));
     }
 
     @Override

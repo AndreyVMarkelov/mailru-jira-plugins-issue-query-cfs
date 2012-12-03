@@ -14,5 +14,13 @@
         <label for="jqlnull">$i18n.getText("queryfields.allowempty")<span class="aui-icon icon-required"></label>
         <input type="checkbox" id="jqlnull" name="jqlnull" #if($jqlnull)checked="checked"#end/>
     </div>
+    <div class="field-group">
+        <label for="options">$i18n.getText("queryfields.options")</label>
+        <select id="options" name="options" size="5" multiple="multiple">
+        #foreach($option in $options.entrySet())
+            <option #if($selectedOptions.contains($option.key))selected="selected"#end value="$option.key">$i18n.getText("$option.value")</option>
+        #end
+        </select>
+    </div>
     #end
 </form>

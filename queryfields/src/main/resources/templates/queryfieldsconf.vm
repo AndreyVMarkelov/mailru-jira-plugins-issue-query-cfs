@@ -30,21 +30,27 @@
                     <table class="grid maxWidth">
                       <thead>
                         <tr>
-                          <th width="12%">$action.getText("queryfields.admin.cfname")</th>
-                          <th width="12%">$action.getText("queryfields.admin.project")</th>
-                          <th width="50%">$action.getText("queryfields.admin.jql")</th>
-                          <th width="12%">$action.getText("queryfields.allowempty")</th>
-                          <th width="12%">$action.getText("queryfields.admin.action")</th>
+                          <th width="10%">$action.getText("queryfields.admin.cfname")</th>
+                          <th width="10%">$action.getText("queryfields.admin.project")</th>
+                          <th width="40%">$action.getText("queryfields.admin.jql")</th>
+                          <th width="10%">$action.getText("queryfields.allowempty")</th>
+                          <th width="18%">$action.getText("queryfields.options")</th>
+                          <th width="10%">$action.getText("queryfields.admin.action")</th>
                         </tr>
                       </thead>
                       <tbody>
                       #foreach($lrFields in $action.getCfData().getLinkerFields())
                         <tr>
-                          <td width="12%">$lrFields.getName()</td>
-                          <td width="12%">$lrFields.getProjectName()</td>
-                          <td width="50%">#if($lrFields.getData())$lrFields.getData()#end</td>
-                          <td width="12%"><input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
-                          <td width="12%"><a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a></td>
+                          <td width="10%">$lrFields.getName()</td>
+                          <td width="10%">$lrFields.getProjectName()</td>
+                          <td width="40%">#if($lrFields.getData())$lrFields.getData()#end</td>
+                          <td width="10%"><input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
+                          <td width="18%">
+                              #foreach($opt in $lrFields.getOptions())
+                              #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
+                              #end
+                          </td>
+                          <td width="10%"><a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a></td>
                         </tr>
                       #end
                       </tbody>
@@ -67,21 +73,27 @@
                     <table class="grid maxWidth">
                       <thead>
                         <tr>
-                          <th width="12%">$action.getText("queryfields.admin.cfname")</th>
-                          <th width="12%">$action.getText("queryfields.admin.project")</th>
-                          <th width="50%">$action.getText("queryfields.admin.jql")</th>
-                          <th width="12%">$action.getText("queryfields.allowempty")</th>
-                          <th width="12%">$action.getText("queryfields.admin.action")</th>
+                          <th width="10%">$action.getText("queryfields.admin.cfname")</th>
+                          <th width="10%">$action.getText("queryfields.admin.project")</th>
+                          <th width="40%">$action.getText("queryfields.admin.jql")</th>
+                          <th width="10%">$action.getText("queryfields.allowempty")</th>
+                          <th width="18%">$action.getText("queryfields.options")</th>
+                          <th width="10%">$action.getText("queryfields.admin.action")</th>
                         </tr>
                       </thead>
                       <tbody>
                       #foreach($lrFields in $action.getCfData().getMultiFields())
                         <tr>
-                          <td width="12%">$lrFields.getName()</td>
-                          <td width="12%">$lrFields.getProjectName()</td>
-                          <td width="50%">#if($lrFields.getData())$lrFields.getData()#end</td>
-                          <td width="12%"><input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
-                          <td width="12%"><a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a></td>
+                          <td width="10%">$lrFields.getName()</td>
+                          <td width="10%">$lrFields.getProjectName()</td>
+                          <td width="40%">#if($lrFields.getData())$lrFields.getData()#end</td>
+                          <td width="10%"><input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
+                          <td width="18%">
+                              #foreach($opt in $lrFields.getOptions())
+                              #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
+                              #end
+                          </td>
+                          <td width="10%"><a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a></td>
                         </tr>
                       #end
                       </tbody>

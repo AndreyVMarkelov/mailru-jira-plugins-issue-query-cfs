@@ -4,6 +4,8 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.util.List;
+
 /**
  * PlugIn stored data manager.
  * 
@@ -17,6 +19,11 @@ public interface QueryFieldsMgr
     boolean getAddNull(long cfId, long projId);
 
     /**
+     * Get linker field options.
+     */
+    List<String> getLinkeFieldsOptions(long cfId, long projId);
+
+    /**
      * Get stored data for the custom field.
      */
     String getQueryFieldData(long cfId, long projId);
@@ -25,6 +32,11 @@ public interface QueryFieldsMgr
      * Set "add null" option.
      */
     void setAddNull(long cfId, long projId, boolean data);
+
+    /**
+     * Set linker field options.
+     */
+    void setLinkerFieldOptions(long cfId, long projId, List<String> options);
 
     /**
      * Put data for the custom field.

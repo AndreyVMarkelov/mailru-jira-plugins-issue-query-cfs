@@ -4,6 +4,6 @@
 #if($value == "Empty")
 ${value}
 #else
-<a href='$requestContext.getBaseUrl()/browse/$value'>${value}#if($fullValue): $fullValue#end</a>
+<a href='$requestContext.getBaseUrl()/browse/$value'>#if($hasKey)${value}:#end${fullValue}</a>
 #end
 #end

@@ -18,6 +18,7 @@ import org.apache.lucene.search.TermQuery;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.imports.project.customfield.ProjectCustomFieldImporter;
 import com.atlassian.jira.imports.project.customfield.ProjectImportableCustomField;
 import com.atlassian.jira.imports.project.customfield.SelectCustomFieldImporter;
@@ -258,10 +259,12 @@ public class LinkerMultiField
 
         String jqlData = null;
         boolean addNull = false;
+        List<String> options = null;
         if (field.isAllProjects())
         {
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
             addNull = qfMgr.getAddNull(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
         }
         else
         {
@@ -271,6 +274,7 @@ public class LinkerMultiField
             }
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
             addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
         }
 
         Map<String, String> setVals = new LinkedHashMap<String, String>();
@@ -282,7 +286,43 @@ public class LinkerMultiField
                 MutableIssue mi = issueMgr.getIssueObject(selVal);
                 if (mi != null && Utils.isValidStr(mi.getSummary()))
                 {
-                    setVals.put(selVal, mi.getSummary());
+                    StringBuilder sb = new StringBuilder();
+                    if (options.contains("status"))
+                    {
+                        sb.append(getI18nBean().getText("queryfields.opt.status")).append(": ").append(mi.getStatusObject().getName());
+                    }
+                    if (options.contains("assignee") && mi.getAssigneeUser() != null)
+                    {
+                        if (sb.length() > 0)
+                        {
+                            sb.append(", ");
+                        }
+                        sb.append(getI18nBean().getText("queryfields.opt.assignee")).append(": ").append(mi.getAssigneeUser().getDisplayName());
+                    }
+                    if (options.contains("priority") && mi.getPriorityObject() != null)
+                    {
+                        if (sb.length() > 0)
+                        {
+                            sb.append(", ");
+                        }
+                        sb.append(getI18nBean().getText("queryfields.opt.priority")).append(": ").append(mi.getPriorityObject().getName());
+                    }
+                    if (options.contains("due") && mi.getDueDate() != null)
+                    {
+                        if (sb.length() > 0)
+                        {
+                            sb.append(", ");
+                        }
+                        sb.append(getI18nBean().getText("queryfields.opt.due")).append(": ").append(ComponentAccessor.getJiraAuthenticationContext().getOutlookDate().format(mi.getDueDate()));
+                    }
+
+                    if (sb.length() > 0)
+                    {
+                        sb.insert(0, "(");
+                        sb.append(")");
+                    }
+                    String fullValue = mi.getSummary()  + " " + sb.toString();
+                    setVals.put(selVal, fullValue);
                 }
             }
         }
@@ -294,6 +334,12 @@ public class LinkerMultiField
             return params;
         }
         params.put("jqlNotSet", Boolean.FALSE);
+        params.put("options", options);
+
+        if (options.contains("key"))
+        {
+            params.put("hasKey", Boolean.TRUE);
+        }
 
         User user = ComponentManager.getInstance().getJiraAuthenticationContext().getLoggedInUser();
         SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlData);
