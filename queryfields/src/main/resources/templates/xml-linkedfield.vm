@@ -4,6 +4,6 @@
 $i18n.getText("queryfields.field.error")
 #else
 #foreach($val in $cfVals.entrySet())
-"$requestContext.getBaseUrl()/browse/$val.key": $val.value#if($velocityCount != $cfVals.size()),#end
+$val.value.getFullData()#if($velocityCount != $cfVals.size()),#end
 #end
 #end

@@ -1,7 +1,11 @@
 #if($value)
     <div class="shorten" id="${customField.id}-field">
        #foreach ($selVal in $setVals.entrySet())
-         <span><a href='$requestContext.getBaseUrl()/browse/$selVal.key'>#if($hasKey)${selVal.key}:#end${selVal.value}</a>
+         #if(${displayParameters.view_issue})
+         <span><a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a> ${selVal.value.getDetails()}
+         #else
+         <span><a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a>
+         #end
          #if($velocityCount != $setVals.size())</span>,#end
        #end
     </div>

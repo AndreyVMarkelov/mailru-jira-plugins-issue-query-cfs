@@ -6,6 +6,8 @@ package ru.mail.jira.plugins.lf;
 
 import java.util.List;
 import org.ofbiz.core.entity.GenericValue;
+import ru.mail.jira.plugins.lf.struct.CfData;
+import ru.mail.jira.plugins.lf.struct.QueryFieldStruct;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -15,7 +17,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 
 /**
  * Administration page of query linking custom fields.
- * 
+ *
  * @author Andrey Markelov
  */
 public class QueryFieldsConfig
@@ -98,7 +100,7 @@ public class QueryFieldsConfig
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
-                        null);
+                        qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addLinkedField(qfs);
                 }
                 else
@@ -117,7 +119,7 @@ public class QueryFieldsConfig
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
                             qfMgr.getAddNull(cf.getIdAsLong(), projId),
-                            null);
+                            qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), projId));
                         cfData.addLinkedField(qfs);
                     }
                 }

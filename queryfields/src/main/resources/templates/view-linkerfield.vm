@@ -4,6 +4,10 @@
 #if($value == "Empty")
 ${value}
 #else
-<a href='$requestContext.getBaseUrl()/browse/$value'>#if($hasKey)${value}:#end${fullValue}</a>
+#if(${displayParameters.view_issue})
+#if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a> ${fullValue.getDetails()}#end
+#else
+#if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a>#end
+#end
 #end
 #end

@@ -116,19 +116,25 @@
                     <table class="grid maxWidth">
                       <thead>
                         <tr>
-                          <th width="15%">$action.getText("queryfields.admin.cfname")</th>
-                          <th width="15%">$action.getText("queryfields.admin.project")</th>
-                          <th width="55%">$action.getText("queryfields.admin.jql")</th>
-                          <th width="15%">$action.getText("queryfields.admin.action")</th>
+                          <th width="10%">$action.getText("queryfields.admin.cfname")</th>
+                          <th width="10%">$action.getText("queryfields.admin.project")</th>
+                          <th width="50%">$action.getText("queryfields.admin.jql")</th>
+                          <th width="20%">$action.getText("queryfields.options")</th>
+                          <th width="10%">$action.getText("queryfields.admin.action")</th>
                         </tr>
                       </thead>
                       <tbody>
                       #foreach($ldFields in $action.getCfData().getLinkedFields())
                         <tr>
-                          <td width="15%">$ldFields.getName()</td>
-                          <td width="15%">$ldFields.getProjectName()</td>
-                          <td width="55%">#if($ldFields.getData())$ldFields.getData()#end</td>
-                          <td width="15%"><a href="#" onclick="configureJql(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId(), 0);">$action.getText("queryfields.admin.action.confugure")</a></td>
+                          <td width="10%">$ldFields.getName()</td>
+                          <td width="10%">$ldFields.getProjectName()</td>
+                          <td width="50%">#if($ldFields.getData())$ldFields.getData()#end</td>
+                          <td width="20%">
+                              #foreach($opt in $ldFields.getOptions())
+                              #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
+                              #end
+                          </td>
+                          <td width="10%"><a href="#" onclick="configureJql(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId(), 0);">$action.getText("queryfields.admin.action.confugure")</a></td>
                         </tr>
                       #end
                       </tbody>

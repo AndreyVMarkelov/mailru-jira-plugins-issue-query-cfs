@@ -1,5 +1,5 @@
 #if($value)
 #foreach ($selVal in $setVals.entrySet())
-<a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.key}#if(${selVal.value}):${selVal.value}#end</a>#if($velocityCount != $setVals.size()), #end
+<a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a>#if($velocityCount != $setVals.size()), #end
 #end
 #end

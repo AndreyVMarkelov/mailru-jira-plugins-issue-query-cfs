@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.apache.velocity.exception.VelocityException;
+import ru.mail.jira.plugins.lf.struct.HtmlEntity;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -112,17 +113,18 @@ public class QueryFieldsService
         params.put("jqlData", qfMgr.getQueryFieldData(cfId, prId));
         params.put("jqlnull", qfMgr.getAddNull(cfId, prId));
 
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("key", "queryfields.opt.key");
+        map.put("status", "queryfields.opt.status");
+        map.put("assignee", "queryfields.opt.assignee");
+        map.put("due", "queryfields.opt.due");
+        map.put("priority", "queryfields.opt.priority");
         if (type.equals("1"))
         {
-            Map<String, String> map = new LinkedHashMap<String, String>();
-            map.put("key", "queryfields.opt.key");
-            map.put("status", "queryfields.opt.status");
-            map.put("assignee", "queryfields.opt.assignee");
-            map.put("due", "queryfields.opt.due");
-            map.put("priority", "queryfields.opt.priority");
-            params.put("options", map);
-            params.put("selectedOptions", qfMgr.getLinkeFieldsOptions(cfId, prId));
+            map.put("editKey", "queryfields.opt.editKey");
         }
+        params.put("options", map);
+        params.put("selectedOptions", qfMgr.getLinkeFieldsOptions(cfId, prId));
 
         try
         {

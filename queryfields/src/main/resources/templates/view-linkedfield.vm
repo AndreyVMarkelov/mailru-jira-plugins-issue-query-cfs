@@ -9,7 +9,11 @@
 #foreach($val in $cfVals.entrySet())
   <tr>
     <td valign="top">
-      <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.key: $val.value</a>
+      #if(${displayParameters.view_issue})
+      <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.value.getSummary()</a> $val.value.getDetails()
+      #else
+      <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.value.getSummary()</a>
+      #end
     </td>
   </tr>
 #end

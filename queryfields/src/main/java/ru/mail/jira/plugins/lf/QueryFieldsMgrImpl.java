@@ -6,6 +6,8 @@ package ru.mail.jira.plugins.lf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 /**
@@ -27,9 +29,9 @@ public class QueryFieldsMgrImpl
     private static final String VAL_SEPARATOR = "||";
 
     /**
-     * Plug-In settings factory.
+     * Plug-In settings.
      */
-    private final PluginSettingsFactory pluginSettingsFactory;
+    private final PluginSettings pluginSettings;
 
     /**
      * Constructor.
@@ -37,7 +39,7 @@ public class QueryFieldsMgrImpl
     public QueryFieldsMgrImpl(
         PluginSettingsFactory pluginSettingsFactory)
     {
-        this.pluginSettingsFactory = pluginSettingsFactory;
+        this.pluginSettings = pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY);
     }
 
     /**
@@ -51,7 +53,7 @@ public class QueryFieldsMgrImpl
     @Override
     public boolean getAddNull(long cfId, long projId)
     {
-        String addNull = (String)pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).get(createPropKey(cfId, projId).concat(".addnull"));
+        String addNull = (String)getPluginSettings().get(createPropKey(cfId, projId).concat(".addnull"));
         return Boolean.parseBoolean(addNull);
     }
 
@@ -60,11 +62,12 @@ public class QueryFieldsMgrImpl
         long cfId,
         long projId)
     {
-        String options = (String)pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).get(createPropKey(cfId, projId).concat(".options"));
+        String options = (String)getPluginSettings().get(createPropKey(cfId, projId).concat(".options"));
         if (options == null)
         {
             List<String> list = new ArrayList<String>();
             list.add("key");
+            list.add("editKey");
             return list;
         }
         else
@@ -73,18 +76,23 @@ public class QueryFieldsMgrImpl
         }
     }
 
+    private synchronized PluginSettings getPluginSettings()
+    {
+        return pluginSettings;
+    }
+
     @Override
     public String getQueryFieldData(
         long cfId,
         long projId)
     {
-        return (String)pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).get(createPropKey(cfId, projId));
+        return (String)getPluginSettings().get(createPropKey(cfId, projId));
     }
 
     @Override
     public void setAddNull(long cfId, long projId, boolean data)
     {
-        pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).put(createPropKey(cfId, projId).concat(".addnull"), Boolean.toString(data));
+        getPluginSettings().put(createPropKey(cfId, projId).concat(".addnull"), Boolean.toString(data));
     }
 
     @Override
@@ -93,7 +101,7 @@ public class QueryFieldsMgrImpl
         long projId,
         List<String> options)
     {
-        pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).put(createPropKey(cfId, projId).concat(".options"), Utils.listToString(options));
+        getPluginSettings().put(createPropKey(cfId, projId).concat(".options"), Utils.listToString(options));
     }
 
     @Override
@@ -102,6 +110,6 @@ public class QueryFieldsMgrImpl
         long projId,
         String data)
     {
-        pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY).put(createPropKey(cfId, projId), data);
+        getPluginSettings().put(createPropKey(cfId, projId), data);
     }
 }

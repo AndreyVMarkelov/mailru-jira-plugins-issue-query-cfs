@@ -4,12 +4,16 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import ru.mail.jira.plugins.lf.struct.IssueData;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.customfields.converters.StringConverterImpl;
 import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
@@ -91,9 +95,11 @@ public class LinkedField
         params.put("i18n", getI18nBean());
 
         String jqlData = null;
+        List<String> options = null;
         if (field.isAllProjects())
         {
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
         }
         else
         {
@@ -102,6 +108,7 @@ public class LinkedField
                 return params;
             }
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
         }
 
         if (!Utils.isValidStr(jqlData))
@@ -151,12 +158,72 @@ public class LinkedField
             Query query = parseResult.getQuery();
             try
             {
-                Map<String, String> cfVals = new LinkedHashMap<String, String>();
+                Map<String, IssueData> cfVals = new LinkedHashMap<String, IssueData>();
                 SearchResults results = searchService.search(user, query, PagerFilter.getUnlimitedFilter());
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)
                 {
-                    cfVals.put(i.getKey(), i.getSummary());
+                    StringBuilder sb = new StringBuilder();
+                    if (options.contains("status"))
+                    {
+                        sb.append(getI18nBean().getText("queryfields.opt.status")).append(": ").append(i.getStatusObject().getName());
+                    }
+                    if (options.contains("assignee") && i.getAssigneeUser() != null)
+                    {
+                        if (sb.length() > 0)
+                        {
+                            sb.append(", ");
+                        }
+                        User aUser = i.getAssigneeUser();
+                        String encodedUser;
+                        try
+                        {
+                            encodedUser = URLEncoder.encode(aUser.getName(), "UTF-8");
+                        }
+                        catch (UnsupportedEncodingException e)
+                        {
+                            //--> impossible
+                            encodedUser = aUser.getName();
+                        }
+
+                        sb.append(getI18nBean().getText("queryfields.opt.assignee")).append(": ")
+                            .append("<a class='user-hover' rel='").append(aUser.getName()).append("' id='issue_summary_assignee_'")
+                            .append(aUser.getName()).append("' href='/secure/ViewProfile.jspa?name='").append(encodedUser)
+                            .append("'>").append(aUser.getDisplayName()).append("</a>");
+                    }
+                    if (options.contains("priority") && i.getPriorityObject() != null)
+                    {
+                        if (sb.length() > 0)
+                        {
+                            sb.append(", ");
+                        }
+                        sb.append(getI18nBean().getText("queryfields.opt.priority")).append(": ").append(i.getPriorityObject().getName());
+                    }
+                    if (options.contains("due") && i.getDueDate() != null)
+                    {
+                        if (sb.length() > 0)
+                        {
+                            sb.append(", ");
+                        }
+                        sb.append(getI18nBean().getText("queryfields.opt.due")).append(": ").append(ComponentAccessor.getJiraAuthenticationContext().getOutlookDate().format(i.getDueDate()));
+                    }
+
+                    if (sb.length() > 0)
+                    {
+                        sb.insert(0, " (");
+                        sb.append(")");
+                    }
+
+                    IssueData issueData;
+                    if (options.contains("key"))
+                    {
+                        issueData = new IssueData(i.getKey().concat(":").concat(i.getSummary()), sb.toString());
+                    }
+                    else
+                    {
+                        issueData = new IssueData(i.getSummary(), sb.toString());
+                    }
+                    cfVals.put(i.getKey(), issueData);
                 }
                 params.put("isError", Boolean.FALSE);
                 params.put("cfVals", cfVals);

@@ -4,9 +4,12 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import ru.mail.jira.plugins.lf.struct.IssueData;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -111,7 +114,22 @@ public class LinkerField
                     {
                         sb.append(", ");
                     }
-                    sb.append(getI18nBean().getText("queryfields.opt.assignee")).append(": ").append(mi.getAssigneeUser().getDisplayName());
+                    User aUser = mi.getAssigneeUser();
+                    String encodedUser;
+                    try
+                    {
+                        encodedUser = URLEncoder.encode(aUser.getName(), "UTF-8");
+                    }
+                    catch (UnsupportedEncodingException e)
+                    {
+                        //--> impossible
+                        encodedUser = aUser.getName();
+                    }
+
+                    sb.append(getI18nBean().getText("queryfields.opt.assignee")).append(": ")
+                        .append("<a class='user-hover' rel='").append(aUser.getName()).append("' id='issue_summary_assignee_'")
+                        .append(aUser.getName()).append("' href='/secure/ViewProfile.jspa?name='").append(encodedUser)
+                        .append("'>").append(aUser.getDisplayName()).append("</a>");
                 }
                 if (options.contains("priority") && mi.getPriorityObject() != null)
                 {
@@ -132,11 +150,20 @@ public class LinkerField
 
                 if (sb.length() > 0)
                 {
-                    sb.insert(0, "(");
+                    sb.insert(0, " (");
                     sb.append(")");
                 }
-                String fullValue = mi.getSummary()  + " " + sb.toString();
-                params.put("fullValue", fullValue);
+
+                IssueData issueData;
+                if (options.contains("key"))
+                {
+                    issueData = new IssueData(mi.getKey().concat(":").concat(mi.getSummary()), sb.toString());
+                }
+                else
+                {
+                    issueData = new IssueData(mi.getSummary(), sb.toString());
+                }
+                params.put("fullValue", issueData);
             }
         }
 
@@ -148,7 +175,7 @@ public class LinkerField
         params.put("jqlNotSet", Boolean.FALSE);
         params.put("options", options);
 
-        if (options.contains("key"))
+        if (options.contains("editKey"))
         {
             params.put("hasKey", Boolean.TRUE);
         }
