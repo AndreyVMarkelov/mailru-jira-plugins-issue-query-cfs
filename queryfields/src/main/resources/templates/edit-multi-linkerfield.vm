@@ -9,7 +9,7 @@
 #end
 <select class="select" id="$customField.id" multiple="multiple" name="$customField.id" size="5">
     #foreach($val in $cfVals.entrySet())
-       <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">#if($val.key == "Empty")$val.value#else#if($hasKey)$val.key: #end$val.value#end</option>
+       <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
     #end
 </select>
 #end

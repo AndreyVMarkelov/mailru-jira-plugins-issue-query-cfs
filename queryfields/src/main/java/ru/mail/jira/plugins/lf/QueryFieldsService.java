@@ -122,6 +122,7 @@ public class QueryFieldsService
         if (type.equals("1"))
         {
             map.put("editKey", "queryfields.opt.editKey");
+            map.put("justDesc", "queryfields.opt.justDesc");
         }
         params.put("options", map);
         params.put("selectedOptions", qfMgr.getLinkeFieldsOptions(cfId, prId));

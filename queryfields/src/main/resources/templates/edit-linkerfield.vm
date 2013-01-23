@@ -7,7 +7,7 @@
 <input type="hidden" name="$customField.id" value="$selected" id="$customField.id" class="textfield" readonly="readonly"/>
 <select id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');">
   #foreach($val in $cfVals.entrySet())
-  <option value="$val.key" #if($val.key == $selected)selected="selected"#end>#if($val.key == "Empty")$val.value#else#if($hasKey)$val.key: #end$val.value#end</option>
+  <option value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
   #end
 </select>
 #end
