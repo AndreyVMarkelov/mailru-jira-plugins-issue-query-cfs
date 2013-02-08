@@ -350,8 +350,21 @@ public class LinkerMultiField
                         sb.insert(0, " (");
                         sb.append(")");
                     }
+
                     IssueData issueData;
-                    if (options.contains("key"))
+                    if (options.contains("justDesc"))
+                    {
+                        String descr = mi.getDescription();
+                        if (Utils.isValidStr(descr))
+                        {
+                            issueData = new IssueData(descr, sb.toString());
+                        }
+                        else
+                        {
+                            issueData = new IssueData(mi.getSummary(), sb.toString());
+                        }
+                    }
+                    else if (options.contains("key"))
                     {
                         issueData = new IssueData(mi.getKey().concat(":").concat(mi.getSummary()), sb.toString());
                     }
@@ -402,7 +415,28 @@ public class LinkerMultiField
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)
                 {
-                    cfVals.put(i.getKey(), i.getSummary());
+                    String summary;
+                    if (options.contains("justDesc"))
+                    {
+                        String descr = i.getDescription();
+                        if (Utils.isValidStr(descr))
+                        {
+                            summary = descr;
+                        }
+                        else
+                        {
+                            summary = i.getSummary();
+                        }
+                    }
+                    else if (options.contains("editKey"))
+                    {
+                        summary = i.getKey().concat(":").concat(i.getSummary());
+                    }
+                    else
+                    {
+                        summary = i.getSummary();
+                    }
+                    cfVals.put(i.getKey(), summary);
                 }
 
                 if (addNull)

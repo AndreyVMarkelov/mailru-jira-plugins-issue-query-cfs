@@ -11,7 +11,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import ru.mail.jira.plugins.lf.struct.IssueData;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -192,7 +194,19 @@ public class LinkerField extends TextCFType implements
                 }
 
                 IssueData issueData;
-                if (options.contains("key"))
+                if (options.contains("justDesc"))
+                {
+                    String descr = mi.getDescription();
+                    if (Utils.isValidStr(descr))
+                    {
+                        issueData = new IssueData(descr, sb.toString());
+                    }
+                    else
+                    {
+                        issueData = new IssueData(mi.getSummary(), sb.toString());
+                    }
+                }
+                else if (options.contains("key"))
                 {
                     issueData = new IssueData(mi.getKey().concat(":")
                         .concat(mi.getSummary()), sb.toString());
@@ -234,7 +248,28 @@ public class LinkerField extends TextCFType implements
                 List<Issue> issues = results.getIssues();
                 for (Issue i : issues)
                 {
-                    cfVals.put(i.getKey(), i.getSummary());
+                    String summary;
+                    if (options.contains("justDesc"))
+                    {
+                        String descr = i.getDescription();
+                        if (Utils.isValidStr(descr))
+                        {
+                            summary = descr;
+                        }
+                        else
+                        {
+                            summary = i.getSummary();
+                        }
+                    }
+                    else if (options.contains("editKey"))
+                    {
+                        summary = i.getKey().concat(":").concat(i.getSummary());
+                    }
+                    else
+                    {
+                        summary = i.getSummary();
+                    }
+                    cfVals.put(i.getKey(), summary);
                 }
 
                 if (addNull)

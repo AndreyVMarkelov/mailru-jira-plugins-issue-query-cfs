@@ -1,3 +1,5 @@
+## Created by Andrey Markelov 05-10-2012.
+## Copyright Mail.Ru Group 2012. All rights reserved.
 #if ($isAutocompleteView)
     #controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
     #if($jqlNotSet || $jqlNotValid)
@@ -30,10 +32,9 @@
                 #end
                 <select class="select" id="$customField.id" multiple="multiple" name="$customField.id" size="5">
                     #foreach($val in $cfVals.entrySet())
-                        <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">#if($val.key == "Empty")$val.value#else#if($hasKey)$val.key: #end$val.value#end</option>
+                        <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
                     #end
                 </select>
         #end
         #customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)
 #end
-    
