@@ -7,20 +7,24 @@
     <input type="hidden" name="prId" value="$prId"/>
     <div class="field-group">
         <label for="jqlclause">$i18n.getText("queryfields.jqlclause")<span class="aui-icon icon-required"></label>
-        <textarea rows="5" cols="30" id="jqlclause" name="jqlclause">#if($jqlData)$jqlData#end</textarea>
-    </div>
-    #if($type == "1")
+            <textarea rows="5" cols="30" id="jqlclause" name="jqlclause">#if($jqlData)$jqlData#end</textarea>
+</div>
+#if($type == "1")
     <div class="field-group">
         <label for="jqlnull">$i18n.getText("queryfields.allowempty")<span class="aui-icon icon-required"></label>
-        <input type="checkbox" id="jqlnull" name="jqlnull" #if($jqlnull)checked="checked"#end/>
-    </div>
-    #end
-    <div class="field-group">
-        <label for="options">$i18n.getText("queryfields.options")</label>
-        <select id="options" name="options" size="5" multiple="multiple">
+            <input type="checkbox" id="jqlnull" name="jqlnull" #if($jqlnull)checked="checked"#end/>
+</div>
+<div class="field-group">
+    <label for="autocompleteview">$i18n.getText("queryfields.autocompleteview")<span class="aui-icon icon-required"></label>
+        <input type="checkbox" id="autocompleteview" name="autocompleteview" #if($autocompleteview)checked="checked"#end/>
+</div>
+#end
+<div class="field-group">
+    <label for="options">$i18n.getText("queryfields.options")</label>
+    <select id="options" name="options" size="5" multiple="multiple">
         #foreach($option in $options.entrySet())
             <option #if($selectedOptions.contains($option.key))selected="selected"#end value="$option.key">$i18n.getText("$option.value")</option>
         #end
-        </select>
-    </div>
+    </select>
+</div>
 </form>

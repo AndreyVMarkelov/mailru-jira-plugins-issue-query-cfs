@@ -1,8 +1,9 @@
 /*
- * Created by Andrey Markelov 29-08-2012.
- * Copyright Mail.Ru Group 2012. All rights reserved.
+ * Created by Andrey Markelov 29-08-2012. Copyright Mail.Ru Group 2012. All
+ * rights reserved.
  */
 package ru.mail.jira.plugins.lf;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,13 @@ import java.util.List;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
+
 /**
  * Implementation of <code>QueryFieldsMgr</code>.
  * 
  * @author Andrey Markelov
  */
-public class QueryFieldsMgrImpl
-    implements QueryFieldsMgr
+public class QueryFieldsMgrImpl implements QueryFieldsMgr
 {
     /**
      * PlugIn key.
@@ -36,10 +37,10 @@ public class QueryFieldsMgrImpl
     /**
      * Constructor.
      */
-    public QueryFieldsMgrImpl(
-        PluginSettingsFactory pluginSettingsFactory)
+    public QueryFieldsMgrImpl(PluginSettingsFactory pluginSettingsFactory)
     {
-        this.pluginSettings = pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY);
+        this.pluginSettings = pluginSettingsFactory
+            .createSettingsForKey(PLUGIN_KEY);
     }
 
     /**
@@ -53,16 +54,16 @@ public class QueryFieldsMgrImpl
     @Override
     public boolean getAddNull(long cfId, long projId)
     {
-        String addNull = (String)getPluginSettings().get(createPropKey(cfId, projId).concat(".addnull"));
+        String addNull = (String) getPluginSettings().get(
+            createPropKey(cfId, projId).concat(".addnull"));
         return Boolean.parseBoolean(addNull);
     }
 
     @Override
-    public List<String> getLinkeFieldsOptions(
-        long cfId,
-        long projId)
+    public List<String> getLinkeFieldsOptions(long cfId, long projId)
     {
-        String options = (String)getPluginSettings().get(createPropKey(cfId, projId).concat(".options"));
+        String options = (String) getPluginSettings().get(
+            createPropKey(cfId, projId).concat(".options"));
         if (options == null)
         {
             List<String> list = new ArrayList<String>();
@@ -82,34 +83,45 @@ public class QueryFieldsMgrImpl
     }
 
     @Override
-    public String getQueryFieldData(
-        long cfId,
-        long projId)
+    public String getQueryFieldData(long cfId, long projId)
     {
-        return (String)getPluginSettings().get(createPropKey(cfId, projId));
+        return (String) getPluginSettings().get(createPropKey(cfId, projId));
     }
 
     @Override
     public void setAddNull(long cfId, long projId, boolean data)
     {
-        getPluginSettings().put(createPropKey(cfId, projId).concat(".addnull"), Boolean.toString(data));
+        getPluginSettings().put(createPropKey(cfId, projId).concat(".addnull"),
+            Boolean.toString(data));
     }
 
     @Override
-    public void setLinkerFieldOptions(
-        long cfId,
-        long projId,
+    public void setLinkerFieldOptions(long cfId, long projId,
         List<String> options)
     {
-        getPluginSettings().put(createPropKey(cfId, projId).concat(".options"), Utils.listToString(options));
+        getPluginSettings().put(createPropKey(cfId, projId).concat(".options"),
+            Utils.listToString(options));
     }
 
     @Override
-    public void setQueryFieldData(
-        long cfId,
-        long projId,
-        String data)
+    public void setQueryFieldData(long cfId, long projId, String data)
     {
         getPluginSettings().put(createPropKey(cfId, projId), data);
+    }
+
+    @Override
+    public boolean isAutocompleteView(long cfId, long projId)
+    {
+        String autocompleteView = (String) getPluginSettings().get(
+            createPropKey(cfId, projId).concat(".autocompleteview"));
+        return Boolean.parseBoolean(autocompleteView);
+    }
+
+    @Override
+    public void setAutocompleteView(long cfId, long projId, boolean data)
+    {
+        getPluginSettings().put(
+            createPropKey(cfId, projId).concat(".autocompleteview"),
+            Boolean.toString(data));
     }
 }

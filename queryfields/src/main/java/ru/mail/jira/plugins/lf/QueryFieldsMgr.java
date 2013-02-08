@@ -19,6 +19,11 @@ public interface QueryFieldsMgr
     boolean getAddNull(long cfId, long projId);
 
     /**
+     * Get "autocomplete view" option.
+     */
+    boolean isAutocompleteView(long cfId, long projId);
+
+    /**
      * Get linker field options.
      */
     List<String> getLinkeFieldsOptions(long cfId, long projId);
@@ -32,6 +37,11 @@ public interface QueryFieldsMgr
      * Set "add null" option.
      */
     void setAddNull(long cfId, long projId, boolean data);
+    
+    /**
+     * Set "autocomplete view" option.
+     */
+    void setAutocompleteView(long cfId, long projId, boolean data);
 
     /**
      * Set linker field options.

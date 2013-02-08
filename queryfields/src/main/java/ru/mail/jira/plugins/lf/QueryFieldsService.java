@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,9 +19,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
 import org.apache.velocity.exception.VelocityException;
+
 import ru.mail.jira.plugins.lf.struct.HtmlEntity;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -112,6 +116,7 @@ public class QueryFieldsService
         params.put("type", type);
         params.put("jqlData", qfMgr.getQueryFieldData(cfId, prId));
         params.put("jqlnull", qfMgr.getAddNull(cfId, prId));
+        params.put("autocompleteview", qfMgr.isAutocompleteView(cfId, prId));
 
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("key", "queryfields.opt.key");
@@ -173,6 +178,7 @@ public class QueryFieldsService
         String prIdStr = req.getParameter("prId");
         String data = req.getParameter("jqlclause");
         String jqlnull = req.getParameter("jqlnull");
+        String autocompleteView = req.getParameter("autocompleteview");
         String[] options = req.getParameterValues("options");
         if (!Utils.isValidStr(cfIdStr) || !Utils.isValidStr(prIdStr))
         {
@@ -238,6 +244,14 @@ public class QueryFieldsService
                 {
                     qfMgr.setAddNull(cfId, prId, false);
                 }
+                if (Utils.isValidStr(autocompleteView) && autocompleteView.equals("on"))
+                {
+                    qfMgr.setAutocompleteView(cfId, prId, true);
+                }
+                else
+                { 
+                    qfMgr.setAutocompleteView(cfId, prId, false);
+                }
                 List<String> optList = new ArrayList<String>();
                 if (options != null)
                 {
@@ -278,6 +292,14 @@ public class QueryFieldsService
             else
             {
                 qfMgr.setAddNull(cfId, prId, false);
+            }
+            if (Utils.isValidStr(autocompleteView) && autocompleteView.equals("on"))
+            {
+                qfMgr.setAutocompleteView(cfId, prId, true);
+            }
+            else
+            {
+                qfMgr.setAutocompleteView(cfId, prId, false);
             }
             List<String> optList = new ArrayList<String>();
             if (options != null)

@@ -52,7 +52,7 @@ public class QueryFieldsConfig
         List<CustomField> cgList = cfMgr.getCustomFieldObjects();
         for (CustomField cf : cgList)
         {
-            if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linker-field"))
+            if (cf.getCustomFieldType().getKey().equals(Consts.CF_KEY_QUERY_LINKER_FIELD))
             {
                 if (cf.isAllProjects())
                 {
@@ -64,6 +64,7 @@ public class QueryFieldsConfig
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.isAutocompleteView(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addLinkerField(qfs);
                 }
@@ -83,12 +84,13 @@ public class QueryFieldsConfig
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
                             qfMgr.getAddNull(cf.getIdAsLong(), projId),
+                            qfMgr.isAutocompleteView(cf.getIdAsLong(), projId),
                             qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), projId));
                         cfData.addLinkerField(qfs);
                     }
                 }
             }
-            else if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linked-field"))
+            else if (cf.getCustomFieldType().getKey().equals(Consts.CF_KEY_QUERY_LINKED_FIELD))
             {
                 if (cf.isAllProjects())
                 {
@@ -100,6 +102,7 @@ public class QueryFieldsConfig
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.isAutocompleteView(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addLinkedField(qfs);
                 }
@@ -119,12 +122,13 @@ public class QueryFieldsConfig
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
                             qfMgr.getAddNull(cf.getIdAsLong(), projId),
+                            qfMgr.isAutocompleteView(cf.getIdAsLong(), projId),
                             qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), projId));
                         cfData.addLinkedField(qfs);
                     }
                 }
             }
-            else if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-multi-linker-field"))
+            else if (cf.getCustomFieldType().getKey().equals(Consts.CF_KEY_QUERY_LINKER_MULTI_FIELD))
             {
                 if (cf.isAllProjects())
                 {
@@ -136,6 +140,7 @@ public class QueryFieldsConfig
                         Consts.PROJECT_NAME_FOR_GLOBAL_CF,
                         qfMgr.getQueryFieldData(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getAddNull(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
+                        qfMgr.isAutocompleteView(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF),
                         qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF));
                     cfData.addMultiFields(qfs);
                 }
@@ -155,6 +160,7 @@ public class QueryFieldsConfig
                             projName,
                             qfMgr.getQueryFieldData(cf.getIdAsLong(), projId),
                             qfMgr.getAddNull(cf.getIdAsLong(), projId),
+                            qfMgr.isAutocompleteView(cf.getIdAsLong(), projId),
                             qfMgr.getLinkeFieldsOptions(cf.getIdAsLong(), projId));
                         cfData.addMultiFields(qfs);
                     }

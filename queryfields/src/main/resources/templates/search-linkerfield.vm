@@ -2,12 +2,12 @@
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 $!{auiparams.put("controlHeaderClass", "aui-field-text")}
 #searcherEditHeader (${customField.id} ${customField.name})
-    <select class="select" id="searcher-$customField.id" name="$customField.id">
-        <option></option>
-        <option value="None">None</option>
-        #foreach ($cfVal in $cfVals)
-            <option value="$cfVal">$cfVal</option>
-        #end
-    </select>
+<select class="select" id="searcher-$customField.id" name="$customField.id">
+    <option></option>
+    <option value="None">None</option>
+    #foreach ($cfVal in $cfVals)
+        <option value="$cfVal">$cfVal</option>
+    #end
+</select>
 #searcherEditFooter (${customField.id} ${customField.description})
 $!{auiparams.clear()}

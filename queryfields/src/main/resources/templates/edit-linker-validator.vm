@@ -6,11 +6,12 @@
     </td>
     <td bgcolor="#ffffff" nowrap width="70%">
         <select id="cfId" name="cfId">
-        #foreach($entry in $cfs.entrySet())
-            <option #if($cfId && $cfId == $entry.key)selected="selected"#end value="$entry.key">$entry.value</option>
-        #end
+            #foreach($entry in $cfs.entrySet())
+                <option #if($cfId && $cfId == $entry.key)selected="selected"#end value="$entry.key">$entry.value</option>
+            #end
         </select>
-        <br/><font size="1">$i18n.getText("queryfields.pf.linkerfield.descr")</font>
+        <br/>
+        <font size="1">$i18n.getText("queryfields.pf.linkerfield.descr")</font>
     </td>
 </tr>
 <tr bgcolor="#ffffff">
@@ -19,10 +20,11 @@
     </td>
     <td bgcolor="#ffffff" nowrap width="70%">
         <select id="invalid_statuses" name="invalid_statuses" multiple="multiple" size="5">
-        #foreach($entry in $statuses.entrySet())
-            <option #if($invalid_statuses.contains($entry.key))selected="selected"#end value="$entry.key">$entry.value</option>
-        #end
+            #foreach($entry in $statuses.entrySet())
+                <option #if($invalid_statuses.contains($entry.key))selected="selected"#end value="$entry.key">$entry.value</option>
+            #end
         </select>
-        <br/><font size="1">$i18n.getText("queryfields.pf.statuses.descr")</font>
+        <br/>
+        <font size="1">$i18n.getText("queryfields.pf.statuses.descr")</font>
     </td>
 </tr>

@@ -1,5 +1,6 @@
 #if($value)
-#foreach ($selVal in $setVals.entrySet())
-${selVal.value.getFullData()}#if($velocityCount != $setVals.size()),#end
+    #foreach ($selVal in $setVals.entrySet())
+        ${selVal.value.getFullData()}#if($velocityCount != $setVals.size()),#end
+    #end
 #end
-#end
+    

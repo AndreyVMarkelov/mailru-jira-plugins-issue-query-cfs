@@ -1,113 +1,166 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
-    <plugin-info>
-        <description>${project.description}</description>
-        <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-        <param name="plugin-logo">/media/magnifer.png</param>
-        <param name="plugin-icon">/media/magnifer.png</param>
-        <param name="vendor-icon">/media/icon.png</param>
-        <param name="vendor-logo">/media/logo.png</param>
-    </plugin-info>
+<atlassian-plugin key="${project.groupId}.${project.artifactId}"
+	name="${project.name}" plugins-version="2">
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="${project.organization.name}" url="${project.organization.url}" />
+		<param name="plugin-logo">/media/magnifer.png</param>
+		<param name="plugin-icon">/media/magnifer.png</param>
+		<param name="vendor-icon">/media/icon.png</param>
+		<param name="vendor-logo">/media/logo.png</param>
+	</plugin-info>
 
-    <!-- Resources -->
-    <resource type="i18n" name="i18n" location="i18n.queryfields"/>
+	<!-- Resources -->
+	<resource type="i18n" name="i18n" location="i18n.queryfields" />
 
-    <web-resource key="queryfieldsrsc" name="Query issues custom fields resources">
-        <transformation extension="js">
-            <transformer key="jsI18n"/>
-        </transformation>
-        <resource type="download" name="mailrusel.css" location="media/queryfields.css"/>
-        <resource type="download" name="mailrusel.js" location="media/queryfields.js"/>
-        <context>atl.general</context>
-        <context>atl.admin</context>
-    </web-resource>
+	<web-resource key="queryfieldsrsc" name="Query issues custom fields resources">
+		<transformation extension="js">
+			<transformer key="jsI18n" />
+		</transformation>
+		<resource type="download" name="mailrusel.css" location="media/queryfields.css" />
+		<resource type="download" name="mailrusel.js" location="media/queryfields.js" />
+		<context>atl.general</context>
+		<context>atl.admin</context>
+	</web-resource>
 
-    <web-resource key="queryfieldsrscadmin" name="Query issues custom fields resources">
-        <resource type="download" name="queryfieldsadmin.js" location="media/queryfieldsadmin.js"/>
-    </web-resource>
-    <!-- End resources -->
+	<web-resource key="queryautocomplete-res"
+		name="Query issues custom fields autocomplete resources">
+		<transformation extension="js">
+			<transformer key="jsI18n" />
+		</transformation>
+		<resource type="download" name="query-autocomplete.js"
+			location="media/query-autocomplete.js" />
+		<context>jira.general</context>
+	</web-resource>
 
-    <!-- Workflows -->
-    <workflow-validator key="linked-validator" name="Linked by field issues validator"
-                        class="ru.mail.jira.plugins.lf.SingleLinkedFieldValidatorFactory">
-        <description>This validator checks state of linked issues</description>
-        <validator-class>ru.mail.jira.plugins.lf.SingleLinkedFieldValidator</validator-class>
-        <resource type="velocity" name="view" location="templates/view-depend-validator.vm"/>
-        <resource type="velocity" name="input-parameters" location="templates/edit-depend-validator.vm"/>
-        <resource type="velocity" name="edit-parameters" location="templates/edit-depend-validator.vm"/>
-    </workflow-validator>
+	<web-resource key="queryfieldsrscadmin" name="Query issues custom fields resources">
+		<resource type="download" name="queryfieldsadmin.js"
+			location="media/queryfieldsadmin.js" />
+	</web-resource>
+	<!-- End resources -->
 
-    <workflow-validator key="linker-validator" name="Linker field validator"
-                        class="ru.mail.jira.plugins.lf.SingleLinkerFieldValidatorFactory">
-        <description>This validator checks state of single linker field issue</description>
-        <validator-class>ru.mail.jira.plugins.lf.SingleLinkerFieldValidator</validator-class>
-        <resource type="velocity" name="view" location="templates/view-linker-validator.vm"/>
-        <resource type="velocity" name="input-parameters" location="templates/edit-linker-validator.vm"/>
-        <resource type="velocity" name="edit-parameters" location="templates/edit-linker-validator.vm"/>
-    </workflow-validator>
+	<!-- Workflows -->
+	<workflow-validator key="linked-validator"
+		name="Linked by field issues validator" class="ru.mail.jira.plugins.lf.SingleLinkedFieldValidatorFactory">
+		<description>This validator checks state of linked issues
+		</description>
+		<validator-class>ru.mail.jira.plugins.lf.SingleLinkedFieldValidator
+		</validator-class>
+		<resource type="velocity" name="view"
+			location="templates/view-depend-validator.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/edit-depend-validator.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/edit-depend-validator.vm" />
+	</workflow-validator>
 
-    <!-- Custom fields -->
-    <customfield-type key="mailru-linker-field" name="Query issue linker custom field" class="ru.mail.jira.plugins.lf.LinkerField">
-        <description>This field is single select list of issue keys by JQL. This field can be used in searching and pie charts.</description>
-        <resource type="velocity" name="view" location="templates/view-linkerfield.vm"/>
-        <resource type="velocity" name="column-view" location="templates/column-view-linkerfield.vm"/>
-        <resource type="velocity" name="xml" location="templates/xml-linkerfield.vm"/>
-        <resource type="velocity" name="edit" location="templates/edit-linkerfield.vm"/>
-    </customfield-type>
+	<workflow-validator key="linker-validator" name="Linker field validator"
+		class="ru.mail.jira.plugins.lf.SingleLinkerFieldValidatorFactory">
+		<description>This validator checks state of single linker field issue
+		</description>
+		<validator-class>ru.mail.jira.plugins.lf.SingleLinkerFieldValidator
+		</validator-class>
+		<resource type="velocity" name="view"
+			location="templates/view-linker-validator.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/edit-linker-validator.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/edit-linker-validator.vm" />
+	</workflow-validator>
 
-    <customfield-type key="mailru-multi-linker-field" name="Query issue multi linker custom field" class="ru.mail.jira.plugins.lf.LinkerMultiField">
-        <description>This field is multi select list of issue keys by JQL.</description>
-        <resource type="velocity" name="view" location="templates/view-multi-linkerfield.vm"/>
-        <resource type="velocity" name="column-view" location="templates/column-view-multi-linkerfield.vm"/>
-        <resource type="velocity" name="xml" location="templates/xml-multi-linkerfield.vm"/>
-        <resource type="velocity" name="edit" location="templates/edit-multi-linkerfield.vm"/>
-    </customfield-type>
+	<!-- Custom fields -->
+	<customfield-type key="mailru-linker-field"
+		name="Query issue linker custom field" class="ru.mail.jira.plugins.lf.LinkerField">
+		<description>This field is single select list of issue keys by JQL.
+			This field can be used in searching and pie charts.</description>
+		<resource type="velocity" name="view"
+			location="templates/view-linkerfield.vm" />
+		<resource type="velocity" name="column-view"
+			location="templates/column-view-linkerfield.vm" />
+		<resource type="velocity" name="xml" location="templates/xml-linkerfield.vm" />
+		<resource type="velocity" name="edit"
+			location="templates/edit-linkerfield.vm" />
+	</customfield-type>
 
-    <customfield-type key="mailru-linked-field" name="Query issue related custom field" class="ru.mail.jira.plugins.lf.LinkedField">
-        <description>This field is read only custom field with values of issue keys by JQL.</description>
-        <resource type="velocity" name="view" location="templates/view-linkedfield.vm"/>
-        <resource type="velocity" name="column-view" location="templates/column-view-linkedfield.vm"/>
-        <resource type="velocity" name="xml" location="templates/xml-linkedfield.vm"/>
-    </customfield-type>
-    <!-- End custom fields -->
+	<customfield-type key="mailru-multi-linker-field"
+		name="Query issue multi linker custom field" class="ru.mail.jira.plugins.lf.LinkerMultiField">
+		<description>This field is multi select list of issue keys by JQL.
+		</description>
+		<resource type="velocity" name="view"
+			location="templates/view-multi-linkerfield.vm" />
+		<resource type="velocity" name="column-view"
+			location="templates/column-view-multi-linkerfield.vm" />
+		<resource type="velocity" name="xml"
+			location="templates/xml-multi-linkerfield.vm" />
+		<resource type="velocity" name="edit"
+			location="templates/edit-multi-linkerfield.vm" />
+	</customfield-type>
 
-    <customfield-searcher key="mailru-linker-field-searcher" name="Query issue linker custom field searcher"
-                          i18n-name-key="mailru.selectcf.admin.seacrher" class="ru.mail.jira.plugins.lf.LirkerFieldSearcher">
-        <description>Allow searching for query issue linker custom field.</description>
-        <resource type="velocity" name="label" location="templates/label-linkerfield.vm"/>
-        <resource type="velocity" name="search" location="templates/search-linkerfield.vm"/>
-        <resource type="velocity" name="view" location="templates/view-search-linkerfield.vm"/>
-        <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-linker-field"/>
-    </customfield-searcher>
+	<customfield-type key="mailru-linked-field"
+		name="Query issue related custom field" class="ru.mail.jira.plugins.lf.LinkedField">
+		<description>This field is read only custom field with values of issue
+			keys by JQL.</description>
+		<resource type="velocity" name="view"
+			location="templates/view-linkedfield.vm" />
+		<resource type="velocity" name="column-view"
+			location="templates/column-view-linkedfield.vm" />
+		<resource type="velocity" name="xml" location="templates/xml-linkedfield.vm" />
+	</customfield-type>
+	<!-- End custom fields -->
 
-    <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="system.admin/globalsettings" weight="95">
-        <label key="queryfields.admin.title"/>
-        <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-            <param name="permission">admin</param>
-        </condition>
-        <link linkId="queryfields-configuration_old">/secure/QueryConfigCfsConfig.jspa</link>
-    </web-item>
+	<customfield-searcher key="mailru-linker-field-searcher"
+		name="Query issue linker custom field searcher" i18n-name-key="mailru.selectcf.admin.seacrher"
+		class="ru.mail.jira.plugins.lf.LirkerFieldSearcher">
+		<description>Allow searching for query issue linker custom field.
+		</description>
+		<resource type="velocity" name="label"
+			location="templates/label-linkerfield.vm" />
+		<resource type="velocity" name="search"
+			location="templates/search-linkerfield.vm" />
+		<resource type="velocity" name="view"
+			location="templates/view-search-linkerfield.vm" />
+		<valid-customfield-type package="${project.groupId}.${project.artifactId}"
+			key="mailru-linker-field" />
+	</customfield-searcher>
 
-    <webwork1 key="queryfields_conf" name="Query issues custom fields configuration" class="java.lang.Object">
-        <actions>
-            <action name="ru.mail.jira.plugins.lf.QueryFieldsConfig" alias="QueryConfigCfsConfig">
-                <view name="input">/templates/queryfieldsconf.vm</view>
-                <view name="success">/templates/queryfieldsconf.vm</view>
-            </action>
-        </actions>
-    </webwork1>
+	<web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link"
+		section="system.admin/globalsettings" weight="95">
+		<label key="queryfields.admin.title" />
+		<condition
+			class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+			<param name="permission">admin</param>
+		</condition>
+		<link linkId="queryfields-configuration_old">/secure/QueryConfigCfsConfig.jspa</link>
+	</web-item>
 
-    <component key="queryfields-config" name="Query issues custom fields plugin configuration" class="ru.mail.jira.plugins.lf.QueryFieldsMgrImpl"/>
-    <component-import key="pluginSettingsFactory">
-        <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
-    </component-import>
-    <component-import key="applicationProperties">
-        <interface>com.atlassian.sal.api.ApplicationProperties</interface>
-    </component-import>
+	<webwork1 key="queryfields_conf" name="Query issues custom fields configuration"
+		class="java.lang.Object">
+		<actions>
+			<action name="ru.mail.jira.plugins.lf.QueryFieldsConfig"
+				alias="QueryConfigCfsConfig">
+				<view name="input">/templates/queryfieldsconf.vm</view>
+				<view name="success">/templates/queryfieldsconf.vm</view>
+			</action>
+		</actions>
+	</webwork1>
 
-    <!-- Rest resources -->
-    <rest key="queryfieldsws" path="/queryfieldsws" version="1.0">
-        <description>Provides the REST resource for query issues custom fields.</description>
-    </rest>
-    <!-- End rest -->
+	<component key="queryfields-config"
+		name="Query issues custom fields plugin configuration" class="ru.mail.jira.plugins.lf.QueryFieldsMgrImpl" />
+	<component-import key="pluginSettingsFactory">
+		<interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory
+		</interface>
+	</component-import>
+	<component-import key="applicationProperties">
+		<interface>com.atlassian.sal.api.ApplicationProperties</interface>
+	</component-import>
+
+	<!-- Rest resources -->
+	<rest key="queryfieldsws" path="/queryfieldsws" version="1.0">
+		<description>Provides the REST resource for query issues custom
+			fields.</description>
+	</rest>
+	<rest key="queryautocompletesrv" path="/queryautocompsrv" version="1.0">
+		<description>REST for query-cfs autocomplete</description>
+	</rest>
+	<!-- End rest -->
 </atlassian-plugin>

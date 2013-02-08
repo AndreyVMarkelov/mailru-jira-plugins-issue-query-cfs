@@ -1,0 +1,30 @@
+## Created by Dmitry Miroshnichenko 18-12-2012. Copyright Mail.Ru Group 2012. All
+## rights reserved.
+<dd class="mail_simple_issue" id="internal-${cfid}_${data.name}">
+    <div class="link-content">
+        <p>
+            <img src="$baseUrl$!{data.typeimage}" width="16" height="16" title="${data.type}" alt="${data.type}">
+                <span title="${data.name}: $!{data.description}">
+                    <a href="$baseUrl/browse/${data.name}" class="link-title">${data.name}</a>
+                    <span class="link-summary">$!{data.description}</span>
+                </span>
+</p>
+<ul class="link-snapshot">
+    <li class="priority">
+        #if ($data.preference)
+            <img src="$baseUrl$!{data.preferenceimage}" width="16" height="16" title="${data.preference}" alt="${data.preference}">
+        #end
+</li>
+<li class="status">
+    #if ($data.state)
+        <img src="$baseUrl$!{data.stateimage}" width="16" height="16" title="${data.state}" alt="${data.state}">
+    #end
+</li>
+</ul>
+</div>
+<div class="delete-link" id="delete_internal-${cfid}_${data.name}">
+    <a class="icon icon-delete" title="$i18n.getText("queryfields.issue.edit.issuepicker.button.link.deselect")" id="delete-link_internal-${cfid}_${data.name}" href="javascript:removeSelectedIssue('${cfid}', '${data.name}');">
+        <span>$i18n.getText("queryfields.issue.edit.issuepicker.button.link.deselect")</span>
+    </a>
+</div>
+</dd>

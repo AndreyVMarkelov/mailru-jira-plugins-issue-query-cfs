@@ -8,6 +8,7 @@ import static java.util.Collections.emptySet;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -55,6 +56,7 @@ import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.NotNull;
 import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.sal.api.ApplicationProperties;
 
 /**
  * Multi linker field.
@@ -85,6 +87,8 @@ public class LinkerMultiField
      * Search service.
      */
     private final SearchService searchService;
+    
+    private final ApplicationProperties applicationProperties;
 
 	/**
      * Constructor.
@@ -95,13 +99,14 @@ public class LinkerMultiField
         final GenericConfigManager genericConfigManager,
         QueryFieldsMgr qfMgr,
         SearchService searchService,
-        IssueManager issueMgr)
+        IssueManager issueMgr, ApplicationProperties applicationProperties)
     {
         super(optionsManager, valuePersister, genericConfigManager);
         projectCustomFieldImporter = new SelectCustomFieldImporter(optionsManager);
         this.qfMgr = qfMgr;
         this.searchService = searchService;
         this.issueMgr = issueMgr;
+        this.applicationProperties = applicationProperties;
     }
 
     public int compare(
@@ -260,14 +265,17 @@ public class LinkerMultiField
         FieldLayoutItem fieldLayoutItem)
     {
         Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
+        params.put("baseUrl", applicationProperties.getBaseUrl());
 
         String jqlData = null;
         boolean addNull = false;
+        boolean isAutocompleteView = false;
         List<String> options = null;
         if (field.isAllProjects())
         {
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
             addNull = qfMgr.getAddNull(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
             options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
         }
         else
@@ -278,8 +286,10 @@ public class LinkerMultiField
             }
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
             addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
+            isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(), issue.getProjectObject().getId());
             options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
         }
+        params.put("isAutocompleteView", isAutocompleteView);
 
         Map<String, IssueData> setVals = new LinkedHashMap<String, IssueData>();
         List<String> selVals = (List<String>)issue.getCustomFieldValue(field);
@@ -354,6 +364,17 @@ public class LinkerMultiField
             }
         }
         params.put("setVals", setVals);
+        
+        ArrayList<Issue> selectedIssues = new ArrayList<Issue>(setVals.size());
+        for (String issueKey : setVals.keySet())
+        {
+            Issue anIssue = issueMgr.getIssueObject(issueKey);
+            if (anIssue != null)
+            {
+                selectedIssues.add(anIssue);
+            }
+        }
+        params.put("selIssues", selectedIssues);
 
         if (!Utils.isValidStr(jqlData))
         {
@@ -386,7 +407,7 @@ public class LinkerMultiField
 
                 if (addNull)
                 {
-                    cfVals.put("Empty", " - ");
+                    cfVals.put("Empty", Consts.EMPTY_VALUE);
                 }
 
 

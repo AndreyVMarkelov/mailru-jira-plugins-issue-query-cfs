@@ -1,14 +1,17 @@
 /*
- * Created by Andrey Markelov 29-08-2012.
- * Copyright Mail.Ru Group 2012. All rights reserved.
+ * Created by Andrey Markelov 29-08-2012. Copyright Mail.Ru Group 2012. All
+ * rights reserved.
  */
 package ru.mail.jira.plugins.lf.struct;
 
+
 import java.util.List;
 
+
 /**
- * This structure keeps plugIn custom fields data for administration page rendering.
- *
+ * This structure keeps plugIn custom fields data for administration page
+ * rendering.
+ * 
  * @author Andrey Markelov
  */
 public class QueryFieldStruct
@@ -34,6 +37,11 @@ public class QueryFieldStruct
     private boolean isAddNull;
 
     /**
+     * Type of view: standard or with autocomplete for large chunks of data
+     */
+    private boolean isAutocompleteView;
+
+    /**
      * Custom field name.
      */
     private String name;
@@ -56,15 +64,9 @@ public class QueryFieldStruct
     /**
      * Constructor.
      */
-    public QueryFieldStruct(
-        long cfId,
-        String name,
-        String descr,
-        long projectId,
-        String projectName,
-        String data,
-        boolean isAddNull,
-        List<String> options)
+    public QueryFieldStruct(long cfId, String name, String descr,
+        long projectId, String projectName, String data, boolean isAddNull,
+        boolean isAutocompleteView, List<String> options)
     {
         this.cfId = cfId;
         this.name = name;
@@ -73,6 +75,7 @@ public class QueryFieldStruct
         this.projectName = projectName;
         this.data = data;
         this.isAddNull = isAddNull;
+        this.isAutocompleteView = isAutocompleteView;
         this.options = options;
     }
 
@@ -116,10 +119,18 @@ public class QueryFieldStruct
         return isAddNull;
     }
 
+    public boolean isAutocompleteView()
+    {
+        return isAutocompleteView;
+    }
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "QueryFieldStruct[cfId=" + cfId + ", data=" + data + ", descr="
-            + descr + ", name=" + name + ", projectId=" + projectId + ", isAddNull="
-            + isAddNull + ", options=" + options + ", projectName=" + projectName + "]";
+            + descr + ", name=" + name + ", projectId=" + projectId
+            + ", isAddNull=" + isAddNull + ", isAutocompleteView="
+            + isAutocompleteView + ", options=" + options + ", projectName="
+            + projectName + "]";
     }
 }

@@ -24,6 +24,7 @@ import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
+import com.atlassian.sal.api.ApplicationProperties;
 
 /**
  * Linked field.
@@ -42,16 +43,20 @@ public class LinkedField
      * Search service.
      */
     private final SearchService searchService;
+    
+    
+    private final ApplicationProperties applicationProperties;
 
     /**
      * Constructor.
      */
     public LinkedField(
         QueryFieldsMgr qfMgr,
-        SearchService searchService)
+        SearchService searchService, ApplicationProperties applicationProperties)
     {
         this.qfMgr = qfMgr;
         this.searchService = searchService;
+        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -93,6 +98,7 @@ public class LinkedField
     {
         Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
         params.put("i18n", getI18nBean());
+        params.put("baseUrl", applicationProperties.getBaseUrl());
 
         String jqlData = null;
         List<String> options = null;
@@ -140,13 +146,13 @@ public class LinkedField
         }
         else
         {
-            if (jqlQuery.contains("RLINK"))
+            if (jqlQuery.contains(Consts.ISSUE_RLINK))
             {
                 if (issue.getKey() == null)
                 {
                     return params;
                 }
-                jqlQuery = jqlQuery.replace("RLINK", issue.getKey());
+                jqlQuery = jqlQuery.replace(Consts.ISSUE_RLINK, issue.getKey());
             }
         }
 

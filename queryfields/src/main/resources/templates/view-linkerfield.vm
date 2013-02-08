@@ -1,13 +1,46 @@
-## Created by Andrey Markelov 29-08-2012.
-## Copyright Mail.Ru Group 2012. All rights reserved.
-#if($value)
-#if($value == "Empty")
-${value}
-#else
-#if(${displayParameters.view_issue})
-#if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a> ${fullValue.getDetails()}#end
-#else
-#if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a>#end
+## Created by Dmitry Miroshnichenko 18-12-2012. Copyright Mail.Ru Group 2012. All
+## rights reserved.
+#if ($isAutocompleteView)
+    #if($selIssue)
+        <table style="table-layout:fixed; width: 35%; min-width: 400px; max-width: 400px">
+            <tbody>
+                <tr>
+                    <td width="5%">
+                        <img src="$baseUrl$!{selIssue.getIssueTypeObject().getIconUrl()}" width="16" height="16" title="${selIssue.getIssueTypeObject().getName()}" alt="${selIssue.getIssueTypeObject().getName()}">
+</td>
+<td style="word-wrap:break-word" width="20%">
+    <a href="$baseUrl/browse/${selIssue.key}" class="link-title">${selIssue.key}</a>
+</td>
+<td style="word-wrap:break-word" width="30%">
+    <span class="link-summary">$!{selIssue.summary}</span>
+</td>
+<td width="5%">
+    #if ($selIssue.getPriorityObject())
+        <img src="$baseUrl$!{selIssue.getPriorityObject().getIconUrl()}" width="16" height="16" title="${selIssue.getPriorityObject().getName()}" alt="${selIssue.getPriorityObject().getName()}">
+    #end	
+</td>
+<td width="5%">
+    #if ($selIssue.getStatusObject())
+        <img src="$baseUrl$!{selIssue.getStatusObject().getIconUrl()}" width="16" height="16" title="${selIssue.getStatusObject().getName()}" alt="${selIssue.getStatusObject().getName()}">
+    #end
+</td>
+</tr>
+</tbody>
+</table>
+    #end
+    #else
+        #if($value)
+            #if($value == "Empty")
+                ${value}
+                #else
+                    #if(${displayParameters.view_issue})
+                        #if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a>
+                            ${fullValue.getDetails()}#end
+                            #else
+                                #if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a>
+                                #end
+                    #end
+            #end
+        #end
 #end
-#end
-#end
+    

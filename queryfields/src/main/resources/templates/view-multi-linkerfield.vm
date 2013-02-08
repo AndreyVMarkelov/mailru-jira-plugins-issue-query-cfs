@@ -1,12 +1,49 @@
-#if($value)
-    <div class="shorten" id="${customField.id}-field">
-       #foreach ($selVal in $setVals.entrySet())
-         #if(${displayParameters.view_issue})
-         <span><a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a> ${selVal.value.getDetails()}
-         #else
-         <span><a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a>
-         #end
-         #if($velocityCount != $setVals.size())</span>,#end
-       #end
-    </div>
+## Created by Dmitry Miroshnichenko 18-12-2012. Copyright Mail.Ru Group 2012. All
+## rights reserved.
+#if ($isAutocompleteView)
+    <table style="table-layout:fixed; width: 35%; min-width: 400px; max-width: 400px">
+        <tbody>
+            #foreach($issue in $selIssues)
+                <tr>
+                    <td width="5%">
+                        <img src="$baseUrl$!{issue.getIssueTypeObject().getIconUrl()}" width="16" height="16" title="${issue.getIssueTypeObject().getName()}" alt="${issue.getIssueTypeObject().getName()}">
+</td>
+<td style="word-wrap:break-word" width="20%">
+    <a href="$baseUrl/browse/${issue.key}" class="link-title">${issue.key}</a>
+</td>
+<td style="word-wrap:break-word" width="30%">
+    <span class="link-summary">$!{issue.summary}</span>
+</td>
+<td width="5%">
+    #if ($issue.getPriorityObject())
+        <img src="$baseUrl$!{issue.getPriorityObject().getIconUrl()}" width="16" height="16" title="${issue.getPriorityObject().getName()}" alt="${issue.getPriorityObject().getName()}">
+    #end	
+</td>
+<td width="5%">
+    #if ($issue.getStatusObject())
+        <img src="$baseUrl$!{issue.getStatusObject().getIconUrl()}" width="16" height="16" title="${issue.getStatusObject().getName()}" alt="${issue.getStatusObject().getName()}">
+    #end
+</td>
+</tr>
+            #end
+</tbody>
+</table>
+#else
+    #if($value)
+        <div class="shorten" id="${customField.id}-field">
+            #foreach ($selVal in $setVals.entrySet())
+                #if(${displayParameters.view_issue})
+                    <span>
+                        <a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a>
+                        ${selVal.value.getDetails()}
+                        #else
+                            <span>
+                                <a href='$requestContext.getBaseUrl()/browse/$selVal.key'>${selVal.value.getSummary()}</a>
+                #end
+                #if($velocityCount != $setVals.size())</span>
+                ,#end
+            #end
+</div>
+    #end
 #end
+    

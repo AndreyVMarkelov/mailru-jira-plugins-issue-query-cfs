@@ -45,7 +45,7 @@ public class SingleLinkerFieldValidatorFactory
         List<CustomField> cgList = ComponentManager.getInstance().getCustomFieldManager().getCustomFieldObjects();
         for (CustomField cf : cgList)
         {
-            if (cf.getCustomFieldType().getKey().equals("ru.mail.jira.plugins.lf.queryfields:mailru-linker-field"))
+            if (cf.getCustomFieldType().getKey().equals(Consts.CF_KEY_QUERY_LINKER_FIELD))
             {
                 res.put(cf.getId(), cf.getName());
             }

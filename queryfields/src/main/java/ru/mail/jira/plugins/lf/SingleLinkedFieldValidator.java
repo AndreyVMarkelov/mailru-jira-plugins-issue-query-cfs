@@ -45,19 +45,19 @@ public class SingleLinkedFieldValidator
     throws InvalidInputException, WorkflowException
     {
         Issue issue = (Issue) transientVars.get("issue");
-
+ 
         String jql = (String) args.get("jql");
         String invalid_statuses = (String) args.get("invalid_statuses");
 
         if (jql != null && jql.length() > 0)
         {
-            if (jql.contains("RLINK"))
+            if (jql.contains(Consts.ISSUE_RLINK))
             {
                 if (issue.getKey() == null)
                 {
                     return;
                 }
-                jql = jql.replace("RLINK", issue.getKey());
+                jql = jql.replace(Consts.ISSUE_RLINK, issue.getKey());
             }
 
             User user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
