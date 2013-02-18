@@ -4,7 +4,6 @@
  */
 package ru.mail.jira.plugins.lf;
 
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -63,14 +62,20 @@ public class LinkerField
      */
     private final IssueManager issueMgr;
 
+    /**
+     * Application properties.
+     */
     private final ApplicationProperties applicationProperties;
 
     /**
      * Constructor.
      */
-    public LinkerField(CustomFieldValuePersister customFieldValuePersister,
-        GenericConfigManager genericConfigManager, QueryFieldsMgr qfMgr,
-        SearchService searchService, IssueManager issueMgr,
+    public LinkerField(
+        CustomFieldValuePersister customFieldValuePersister,
+        GenericConfigManager genericConfigManager,
+        QueryFieldsMgr qfMgr,
+        SearchService searchService,
+        IssueManager issueMgr,
         ApplicationProperties applicationProperties)
     {
         super(customFieldValuePersister, genericConfigManager);
@@ -81,29 +86,18 @@ public class LinkerField
     }
 
     @Override
-    public Map<String, Object> getVelocityParameters(Issue issue,
-        CustomField field, FieldLayoutItem fieldLayoutItem)
+    public Map<String, Object> getVelocityParameters(
+        Issue issue,
+        CustomField field,
+        FieldLayoutItem fieldLayoutItem)
     {
-        Map<String, Object> params = super.getVelocityParameters(issue, field,
-            fieldLayoutItem);
+        Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
         params.put("i18n", getI18nBean());
         params.put("baseUrl", applicationProperties.getBaseUrl());
 
-        String jqlData = null;
-        boolean addNull = false;
-        boolean isAutocompleteView = false;
-        List<String> options = null;
         Long prId;
         if (field.isAllProjects())
         {
-            jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(),
-                Consts.PROJECT_ID_FOR_GLOBAL_CF);
-            addNull = qfMgr.getAddNull(field.getIdAsLong(),
-                Consts.PROJECT_ID_FOR_GLOBAL_CF);
-            isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(),
-                Consts.PROJECT_ID_FOR_GLOBAL_CF);
-            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(),
-                Consts.PROJECT_ID_FOR_GLOBAL_CF);
             prId = Consts.PROJECT_ID_FOR_GLOBAL_CF;
         }
         else
@@ -113,13 +107,14 @@ public class LinkerField
                 return params;
             }
             prId = issue.getProjectObject().getId();
-            jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
-            addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
-            isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(),issue.getProjectObject().getId());
-            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
         }
+
+        String jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), prId);
+        boolean addNull = qfMgr.getAddNull(field.getIdAsLong(), prId);
+        boolean isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(), prId);
+        List<String> options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), prId);
+
         params.put("isAutocompleteView", isAutocompleteView);
-        params.put("issuekey", issue.getKey());
         params.put("prId", prId.toString());
 
         String cfValue = field.getValueFromIssue(issue);

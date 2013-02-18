@@ -8,7 +8,7 @@
     <div class="cfs-query-linker-autocomplete" input-id="$customField.id" cf-id="$customField.id" cf-base-url="$baseUrl">
         <div class="ajax_autocomplete atlassian-autocomplete" id="${customField.id}_container">
             <input type="text" id="$customField.id" value="$selected" class="text long-field" name="$customField.id" autocomplete="off" />
-            <a href="javascript:upChooseValFromNewWindow('$customField.id', '$baseUrl', '$customField.id', '$issuekey', '$prId');" class="popup-trigger">
+            <a href="javascript:upChooseValFromNewWindow('$customField.id', '$baseUrl', '$customField.id', '$prId');" class="popup-trigger">
             <img height="16" src="$baseUrl/images/icons/add_16.gif" title="Select value" width="16"></a>
             <div class="description">$i18n.getText("queryfields.autocomplete.hint")</div>
         </div>

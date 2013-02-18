@@ -51,8 +51,6 @@ public class MailRuQueryPickerAction
 
     private String returnid;
 
-    private String issuekey;
-
     private String prId;
 
     /**
@@ -133,11 +131,6 @@ public class MailRuQueryPickerAction
         return inputid;
     }
 
-    public String getIssuekey()
-    {
-        return issuekey;
-    }
-
     public String getPrId()
     {
         return prId;
@@ -156,11 +149,6 @@ public class MailRuQueryPickerAction
     public void setInputid(String inputid)
     {
         this.inputid = inputid;
-    }
-
-    public void setIssuekey(String issuekey)
-    {
-        this.issuekey = issuekey;
     }
 
     public void setPrId(String prId)
