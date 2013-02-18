@@ -3,6 +3,6 @@
 $i18n.getText("queryfields.error.jql")
 <ul>
     #foreach($err in $errs)
-        <li>$err</li>
+    <li>$err</li>
     #end
 </ul>

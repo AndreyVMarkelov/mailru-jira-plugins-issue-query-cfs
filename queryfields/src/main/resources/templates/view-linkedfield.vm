@@ -2,24 +2,23 @@
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 #if($jqlNotSet || $jqlNotValid)
     <label>$i18n.getText("queryfields.field.error")</label>
-    #else
-        <div class="multirowdiv">
-            <table width="100%" valign="top">
-                <tbody>
-                    #foreach($val in $cfVals.entrySet())
-                        <tr>
-                            <td valign="top">
-                                #if(${displayParameters.view_issue})
-                                    <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.value.getSummary()</a>
-                                    $val.value.getDetails()
-                                    #else
-                                        <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.value.getSummary()</a>
-                                #end
-                            </td>
-                        </tr>
+#else
+    <div class="multirowdiv">
+        <table width="100%" valign="top">
+            <tbody>
+            #foreach($val in $cfVals.entrySet())
+                <tr>
+                    <td valign="top">
+                    #if(${displayParameters.view_issue})
+                        <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.value.getSummary()</a>
+                        $val.value.getDetails()
+                    #else
+                        <a href="$requestContext.getBaseUrl()/browse/$val.key">$val.value.getSummary()</a>
                     #end
-                </tbody>
-            </table>
-        </div>
+                    </td>
+                </tr>
+            #end
+            </tbody>
+        </table>
+    </div>
 #end
-    

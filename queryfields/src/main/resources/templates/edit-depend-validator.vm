@@ -6,8 +6,8 @@
     </td>
     <td bgcolor="#ffffff" nowrap width="70%">
         <textarea id="jql" name="jql" rows="3">#if($jql)$jql#end</textarea>
-            <br/>
-            <font size="1">$i18n.getText("queryfields.pf.jql.descr")</font>
+        <br/>
+        <font size="1">$i18n.getText("queryfields.pf.jql.descr")</font>
     </td>
 </tr>
 <tr bgcolor="#ffffff">
@@ -16,9 +16,9 @@
     </td>
     <td bgcolor="#ffffff" nowrap width="70%">
         <select id="invalid_statuses" name="invalid_statuses" multiple="multiple" size="5">
-            #foreach($entry in $statuses.entrySet())
-                <option #if($invalid_statuses.contains($entry.key))selected="selected"#end value="$entry.key">$entry.value</option>
-            #end
+        #foreach($entry in $statuses.entrySet())
+            <option #if($invalid_statuses.contains($entry.key))selected="selected"#end value="$entry.key">$entry.value</option>
+        #end
         </select>
         <br/>
         <font size="1">$i18n.getText("queryfields.pf.statuses.descr")</font>

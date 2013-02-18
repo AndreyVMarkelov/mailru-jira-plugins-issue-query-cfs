@@ -4,164 +4,166 @@
     <head>
         <title>$action.getText("queryfields.admin.title")</title>
         <meta name="decorator" content="admin"/>
-        <meta name="admin.active.section" content="admin_plugins_menu/mailru-admin-section">
-            <meta name="admin.active.tab" content="queryfields-configuration">
-                $webResourceManager.requireResource("jira.webresources:global-static")
-                $webResourceManager.requireResource("jira.webresources:jira-global")
-                $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
-                $webResourceManager.requireResource("jira.webresources:autocomplete")
-                $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrscadmin")
-</head>
-<body class="aui">
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:autocomplete")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrscadmin")
+    </head>
+    <body class="aui">
     #if($action.hasAdminPermission())
-        <input type="hidden" name="atl_token" id="atl_token" value="$action.getXsrfToken()"/>
-        <table border="0" cellpadding="10" cellspacing="0" width="100%">
-            <tbody>
-                <tr>
-                    <td>
-                        <table class="jiraform maxWidth">
-                            <tr>
-                                <td class="jiraformheader">
-                                    <h3 class="formtitle">$action.getText("queryfields.linkingfields")</h3>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <table class="grid maxWidth">
-                                        <thead>
-                                            <tr>
-                                                <th width="10%">$action.getText("queryfields.admin.cfname")</th>
-                                                <th width="10%">$action.getText("queryfields.admin.project")</th>
-                                                <th width="40%">$action.getText("queryfields.admin.jql")</th>
-                                                <th width="10%">$action.getText("queryfields.allowempty")</th>
-                                                <th width="10%">$action.getText("queryfields.autocompleteview")</th>
-                                                <th width="18%">$action.getText("queryfields.options")</th>
-                                                <th width="10%">$action.getText("queryfields.admin.action")</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            #foreach($lrFields in $action.getCfData().getLinkerFields())
-                                                <tr>
-                                                    <td width="10%">$lrFields.getName()</td>
-                                                    <td width="10%">$lrFields.getProjectName()</td>
-                                                    <td width="40%">#if($lrFields.getData())$lrFields.getData()#end</td>
-                                                        <td width="10%">
-                                                            <input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
-                                                                <td width="10%">
-                                                                    <input type="checkbox" #if($lrFields.isAutocompleteView())checked="checked"#end/ disabled="disabled"></td>
-                                                                        <td width="18%">
-                                                                            #foreach($opt in $lrFields.getOptions())
-                                                                                #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
-                                                                            #end
-                                                                        </td>
-                                                                        <td width="10%">
-                                                                            <a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a>
-                                                                        </td>
-</tr>
-                                            #end
-</tbody>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-    <td>
-        <table class="jiraform maxWidth">
-            <tr>
-                <td class="jiraformheader">
-                    <h3 class="formtitle">$action.getText("queryfields.multilinkingfields")</h3>
-                </td>
-            </tr>
+    <input type="hidden" name="atl_token" id="atl_token" value="$action.getXsrfToken()"/>
+    <table border="0" cellpadding="10" cellspacing="0" width="100%">
+        <tbody>
             <tr>
                 <td>
-                    <table class="grid maxWidth">
-                        <thead>
-                            <tr>
-                                <th width="10%">$action.getText("queryfields.admin.cfname")</th>
-                                <th width="10%">$action.getText("queryfields.admin.project")</th>
-                                <th width="40%">$action.getText("queryfields.admin.jql")</th>
-                                <th width="10%">$action.getText("queryfields.allowempty")</th>
-                                <th width="10%">$action.getText("queryfields.autocompleteview")</th>
-                                <th width="18%">$action.getText("queryfields.options")</th>
-                                <th width="10%">$action.getText("queryfields.admin.action")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            #foreach($lrFields in $action.getCfData().getMultiFields())
-                                <tr>
-                                    <td width="10%">$lrFields.getName()</td>
-                                    <td width="10%">$lrFields.getProjectName()</td>
-                                    <td width="40%">#if($lrFields.getData())$lrFields.getData()#end</td>
-                                        <td width="10%">
-                                            <input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"></td>
-                                                <td width="10%">
-                                                    <input type="checkbox" #if($lrFields.isAutocompleteView())checked="checked"#end/ disabled="disabled"></td>
-                                                        <td width="18%">
-                                                            #foreach($opt in $lrFields.getOptions())
-                                                                #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
-                                                            #end
-                                                        </td>
-                                                        <td width="10%">
-                                                            <a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a>
-                                                        </td>
-</tr>
-                            #end
-</tbody>
-</table>
-                                                        </td>
-                                                </tr>
-</table>
-</td>
-</tr>
-<tr>
-    <td>
-        <table class="jiraform maxWidth">
-            <tr>
-                <td class="jiraformheader">
-                    <h3 class="formtitle">$action.getText("queryfields.relatedfields")</h3>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <table class="grid maxWidth">
-                        <thead>
-                            <tr>
-                                <th width="10%">$action.getText("queryfields.admin.cfname")</th>
-                                <th width="10%">$action.getText("queryfields.admin.project")</th>
-                                <th width="50%">$action.getText("queryfields.admin.jql")</th>
-                                <th width="20%">$action.getText("queryfields.options")</th>
-                                <th width="10%">$action.getText("queryfields.admin.action")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            #foreach($ldFields in $action.getCfData().getLinkedFields())
-                                <tr>
-                                    <td width="10%">$ldFields.getName()</td>
-                                    <td width="10%">$ldFields.getProjectName()</td>
-                                    <td width="50%">#if($ldFields.getData())$ldFields.getData()#end</td>
-                                        <td width="20%">
-                                            #foreach($opt in $ldFields.getOptions())
+                    <table class="jiraform maxWidth">
+                        <tr>
+                            <td class="jiraformheader">
+                                <h3 class="formtitle">$action.getText("queryfields.linkingfields")</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="grid maxWidth">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">$action.getText("queryfields.admin.cfname")</th>
+                                            <th width="10%">$action.getText("queryfields.admin.project")</th>
+                                            <th width="40%">$action.getText("queryfields.admin.jql")</th>
+                                            <th width="10%">$action.getText("queryfields.allowempty")</th>
+                                            <th width="10%">$action.getText("queryfields.autocompleteview")</th>
+                                            <th width="18%">$action.getText("queryfields.options")</th>
+                                            <th width="10%">$action.getText("queryfields.admin.action")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach($lrFields in $action.getCfData().getLinkerFields())
+                                        <tr>
+                                            <td width="10%">$lrFields.getName()</td>
+                                            <td width="10%">$lrFields.getProjectName()</td>
+                                            <td width="40%">#if($lrFields.getData())$lrFields.getData()#end</td>
+                                            <td width="10%">
+                                                <input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"/>
+                                            </td>
+                                            <td width="10%">
+                                                <input type="checkbox" #if($lrFields.isAutocompleteView())checked="checked"#end/ disabled="disabled">
+                                            </td>
+                                            <td width="18%">
+                                            #foreach($opt in $lrFields.getOptions())
                                                 #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
                                             #end
-                                        </td>
-                                        <td width="10%">
-                                            <a href="#" onclick="configureJql(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId(), 0);">$action.getText("queryfields.admin.action.confugure")</a>
-                                        </td>
-                                </tr>
-                            #end
-                        </tbody>
+                                            </td>
+                                            <td width="10%">
+                                                <a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a>
+                                            </td>
+                                        </tr>
+                                    #end
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
                     </table>
                 </td>
             </tr>
-        </table>
-    </td>
-</tr>
-</tbody>
-                        </table>
-                        #else
-                            <div class="errorArea">$action.getText("queryfields.admin.link.error")</div>
+            <tr>
+                <td>
+                    <table class="jiraform maxWidth">
+                        <tr>
+                            <td class="jiraformheader">
+                                <h3 class="formtitle">$action.getText("queryfields.multilinkingfields")</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="grid maxWidth">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">$action.getText("queryfields.admin.cfname")</th>
+                                            <th width="10%">$action.getText("queryfields.admin.project")</th>
+                                            <th width="40%">$action.getText("queryfields.admin.jql")</th>
+                                            <th width="10%">$action.getText("queryfields.allowempty")</th>
+                                            <th width="10%">$action.getText("queryfields.autocompleteview")</th>
+                                            <th width="18%">$action.getText("queryfields.options")</th>
+                                            <th width="10%">$action.getText("queryfields.admin.action")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach($lrFields in $action.getCfData().getMultiFields())
+                                        <tr>
+                                            <td width="10%">$lrFields.getName()</td>
+                                            <td width="10%">$lrFields.getProjectName()</td>
+                                            <td width="40%">#if($lrFields.getData())$lrFields.getData()#end</td>
+                                            <td width="10%">
+                                                <input type="checkbox" #if($lrFields.isAddNull())checked="checked"#end/ disabled="disabled"/>
+                                            </td>
+                                            <td width="10%">
+                                                <input type="checkbox" #if($lrFields.isAutocompleteView())checked="checked"#end/ disabled="disabled"/>
+                                            </td>
+                                            <td width="18%">
+                                            #foreach($opt in $lrFields.getOptions())
+                                                #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
+                                            #end
+                                            </td>
+                                            <td width="10%">
+                                                <a href="#" onclick="configureJql(event, '$baseUrl', $lrFields.getCfId(), $lrFields.getProjectId(), 1);">$action.getText("queryfields.admin.action.confugure")</a>
+                                            </td>
+                                        </tr>
+                                    #end
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="jiraform maxWidth">
+                        <tr>
+                            <td class="jiraformheader">
+                                <h3 class="formtitle">$action.getText("queryfields.relatedfields")</h3>
+                             </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="grid maxWidth">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">$action.getText("queryfields.admin.cfname")</th>
+                                            <th width="10%">$action.getText("queryfields.admin.project")</th>
+                                            <th width="50%">$action.getText("queryfields.admin.jql")</th>
+                                            <th width="20%">$action.getText("queryfields.options")</th>
+                                            <th width="10%">$action.getText("queryfields.admin.action")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach($ldFields in $action.getCfData().getLinkedFields())
+                                        <tr>
+                                            <td width="10%">$ldFields.getName()</td>
+                                            <td width="10%">$ldFields.getProjectName()</td>
+                                            <td width="50%">#if($ldFields.getData())$ldFields.getData()#end</td>
+                                            <td width="20%">
+                                            #foreach($opt in $ldFields.getOptions())
+                                                #if($velocityCount > 1), #end$action.getText("queryfields.opt.$opt")
+                                            #end
+                                            </td>
+                                            <td width="10%">
+                                                <a href="#" onclick="configureJql(event, '$baseUrl', $ldFields.getCfId(), $ldFields.getProjectId(), 0);">$action.getText("queryfields.admin.action.confugure")</a>
+                                            </td>
+                                        </tr>
+                                    #end
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    #else
+    <div class="errorArea">$action.getText("queryfields.admin.link.error")</div>
     #end
-</body>
+    </body>
 </html>

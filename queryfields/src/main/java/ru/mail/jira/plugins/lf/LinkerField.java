@@ -11,9 +11,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import ru.mail.jira.plugins.lf.struct.IssueData;
-
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -41,14 +39,14 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
 import com.atlassian.sal.api.ApplicationProperties;
 
-
 /**
  * Linker field.
  * 
  * @author Andrey Markelov
  */
-public class LinkerField extends TextCFType implements
-        SortableCustomField<String>
+public class LinkerField
+    extends TextCFType
+    implements SortableCustomField<String>
 {
     /**
      * PlugIn data manager.
@@ -95,6 +93,7 @@ public class LinkerField extends TextCFType implements
         boolean addNull = false;
         boolean isAutocompleteView = false;
         List<String> options = null;
+        Long prId;
         if (field.isAllProjects())
         {
             jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(),
@@ -105,6 +104,7 @@ public class LinkerField extends TextCFType implements
                 Consts.PROJECT_ID_FOR_GLOBAL_CF);
             options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(),
                 Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            prId = Consts.PROJECT_ID_FOR_GLOBAL_CF;
         }
         else
         {
@@ -112,16 +112,15 @@ public class LinkerField extends TextCFType implements
             {
                 return params;
             }
-            jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue
-                .getProjectObject().getId());
-            addNull = qfMgr.getAddNull(field.getIdAsLong(), issue
-                .getProjectObject().getId());
-            isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(),
-                issue.getProjectObject().getId());
-            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue
-                .getProjectObject().getId());
+            prId = issue.getProjectObject().getId();
+            jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
+            addNull = qfMgr.getAddNull(field.getIdAsLong(), issue.getProjectObject().getId());
+            isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(),issue.getProjectObject().getId());
+            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
         }
         params.put("isAutocompleteView", isAutocompleteView);
+        params.put("issuekey", issue.getKey());
+        params.put("prId", prId.toString());
 
         String cfValue = field.getValueFromIssue(issue);
         if (Utils.isValidStr(cfValue))

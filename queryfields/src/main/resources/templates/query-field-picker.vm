@@ -1,0 +1,28 @@
+## Created by Andrey Markelov 18-02-2013.
+## Copyright Mail.Ru Group 2013. All rights reserved.
+$webResourceManager.requireResource("ru.mail.jira.plugins.lf.queryfields:queryfieldsrsc")
+<h1>$action.getText("mailru.cf.query.querypicker.header")</h1>
+<div class="content-container">
+    <div class="content-body aui-panel">
+        <table class="aui aui-table-rowhover">
+            <thead>
+                <tr>
+                    <th width="1%" class="hidden"></th>
+                    <th width="19%">$action.getText("queryfields.opt.key")</th>
+                    <th width="80%">$action.getText("queryfields.opt.summary")</th>
+                </tr>
+            </thead>
+            <tbody>
+            #foreach ($entry in $action.getCfValues().entrySet())
+                <tr id="value_row_${entry.key}" title="$action.getText('mailru.cf.query.querypicker.hint', $entry.key)" onclick="javascript:selectAndReturnValue(getElementById('id_${entry.key}').getAttribute('value'), '$returnid');">
+                    <td width="1%" class="hidden">
+                        <div id="id_$entry.key" value="$entry.key" style="visibility: hidden"></div>
+                    </td>
+                    <td width="19%" class="word-wrapper">$entry.key</td>
+                    <td width="80%" class="word-wrapper">$entry.value</td>
+                </tr>
+            #end
+            </tbody>
+        </table>
+    </div>
+</div>

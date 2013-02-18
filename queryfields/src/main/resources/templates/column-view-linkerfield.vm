@@ -2,10 +2,8 @@
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 #if($value)
     #if($value == "Empty")
-        ${value}
-        #else
-            #if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a>
-            #end
+    ${value}
+    #else
+        #if($fullValue)<a href='$requestContext.getBaseUrl()/browse/$value'>${fullValue.getSummary()}</a>#end
     #end
 #end
-    

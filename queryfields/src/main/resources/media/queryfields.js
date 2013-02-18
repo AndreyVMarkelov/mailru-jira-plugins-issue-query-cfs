@@ -2,8 +2,7 @@
 // Copyright Mail.Ru Group 2012. All rights reserved.
 
 //--> initialize dialog
-function initJqlDlg(baseUrl, cfId, prId, type)
-{
+function initJqlDlg(baseUrl, cfId, prId, type) {
     var res = "";
     jQuery.ajax({
         url: baseUrl + "/rest/queryfieldsws/1.0/queryfieldssrv/initjqldlg",
@@ -107,3 +106,25 @@ function setQueryFieldValue(idstr, cid) {
     var val = AJS.$("#" + idstr + " :selected").val();
     AJS.$("#" + cid).val(val);
 }
+
+function upChooseValFromNewWindow(cfId, baseUrl, returnCfId, issuekey, prId) {
+    var marginTop = 100;
+    var marginLeft = 500;
+
+    var pickerWindow = window.open(
+        baseUrl + "/secure/popups/MailRuUserPickerValuePickerAction.jspa?cfid=" + cfId + "&inputid=" + cfId + "&returnid=" + returnCfId + "&issuekey=" + issuekey + "&prId=" + prId,
+        AJS.I18n.getText("jrole-group-usercf.userpicker.title"),
+        "status=0,toolbar=0,location=0,menubar=0,directories=0,resizable=1,scrollbars=1,height=500,width=500");
+
+    pickerWindow.moveTo(marginLeft, marginTop);
+}
+
+function selectAndReturnValue(value, returnId) {
+    var returnElem = window.opener.jQuery("#" + returnId);
+
+    if (returnElem) {
+        returnElem.val(value);
+        returnElem.trigger('input');
+    }
+    window.close();
+};
