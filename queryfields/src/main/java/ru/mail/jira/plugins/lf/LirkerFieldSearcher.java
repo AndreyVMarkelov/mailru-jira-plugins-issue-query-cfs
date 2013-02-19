@@ -5,6 +5,7 @@
 package ru.mail.jira.plugins.lf;
 
 import java.util.Comparator;
+
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.QueryContextConverter;
 import com.atlassian.jira.issue.customfields.searchers.ExactTextSearcher;

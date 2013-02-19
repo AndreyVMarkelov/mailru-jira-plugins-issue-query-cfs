@@ -5,9 +5,12 @@
 package ru.mail.jira.plugins.lf;
 
 import java.util.List;
+
 import org.ofbiz.core.entity.GenericValue;
+
 import ru.mail.jira.plugins.lf.struct.CfData;
 import ru.mail.jira.plugins.lf.struct.QueryFieldStruct;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.fields.CustomField;

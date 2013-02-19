@@ -9,7 +9,9 @@ import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import ru.mail.jira.plugins.lf.struct.IssueData;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -99,7 +101,9 @@ public class LinkedField
         Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
         params.put("i18n", getI18nBean());
         params.put("baseUrl", applicationProperties.getBaseUrl());
-
+        
+        Utils.addViewAndEditParameters(params, field.getId());
+        
         String jqlData = null;
         List<String> options = null;
         if (field.isAllProjects())

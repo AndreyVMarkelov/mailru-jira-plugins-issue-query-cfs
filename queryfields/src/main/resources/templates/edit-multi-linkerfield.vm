@@ -1,39 +1,146 @@
 ## Created by Andrey Markelov 05-10-2012.
 ## Copyright Mail.Ru Group 2012. All rights reserved.
-#if ($isAutocompleteView)
-    #controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
-    #if($jqlNotSet || $jqlNotValid)
-        <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
-    #else
-    <div class="cfs-query-multi-linker-autocomplete" input-id="cfs-query-multi-linker-autocomplete-input-$customField.id" cf-id="$customField.id" cf-base-url="$baseUrl">
-        <div class="ajax_autocomplete atlassian-autocomplete" id="${customField.id}_container">
-            <input class="text long-field" type="text" id="cfs-query-multi-linker-autocomplete-input-$customField.id" autocomplete="off"/>
-            <div class="cfs-query-multi-linker-selected-list" cf-id="$customField.id" base-url="$baseUrl">
-                <select class="hidden" name="$customField.id" id="$customField.id" multiple="multiple">
+#if($canView)
+	#if($canEdit)
+        #if ($isAutocompleteView)
+            #controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+            #if($jqlNotSet || $jqlNotValid)
+                <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+            #else
+            <div class="cfs-query-multi-linker-autocomplete" input-id="cfs-query-multi-linker-autocomplete-input-$customField.id" cf-id="$customField.id" cf-base-url="$baseUrl">
+                <div class="ajax_autocomplete atlassian-autocomplete" id="${customField.id}_container">
+                    <input class="text long-field" type="text" id="cfs-query-multi-linker-autocomplete-input-$customField.id" autocomplete="off"/>
+                    <div class="cfs-query-multi-linker-selected-list" cf-id="$customField.id" base-url="$baseUrl">
+                        <select class="hidden" name="$customField.id" id="$customField.id" multiple="multiple">
+                        #foreach($issuekey in $setVals.keySet())
+                            <option id="${customField.id}_${issuekey}" class="mail-issue-element" value="${issuekey}" selected="selected">${issuekey}</option>
+                        #end
+                        </select>
+                    </div>
+                    <div class="description">$i18n.getText("queryfields.autocomplete.hint")</div>
+                </div>
+            </div>
+            #end
+            #controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)
+            <dl class="${customField.id}-issuepicker-representation links-list long-field field-group"></dl>
+        #else
+            #customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
+            #if($jqlNotSet || $jqlNotValid)
+                <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+            #else
+                <select class="select" id="$customField.id" multiple="multiple" name="$customField.id" size="$cfVals.entrySet().size()">
+                #foreach($val in $cfVals.entrySet())
+                    <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
+                #end
+                </select>
+            #end
+            #customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)
+        #end	
+	#else
+		#if ($isAutocompleteView)
+			#if ($setVals.keySet().size() > 0)
+    			#controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+				<span title="$i18n.getText("queryfields.restricted.hint")">
+    				#if($jqlNotSet || $jqlNotValid)
+    					<input style="background-color: #CCCCCC" value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+                    #else
+                        <input class="hidden" type="text" id="cfs-query-multi-linker-autocomplete-input-$customField.id"/>
+                        <select class="hidden" name="$customField.id" id="$customField.id" multiple="multiple">
+                            #foreach($issuekey in $setVals.keySet())
+                                <option id="${customField.id}_${issuekey}" class="mail-issue-element" value="${issuekey}" selected="selected">${issuekey}</option>
+                            #end
+                        </select>
+    				#end
+                </span>
+                #controlFooter ($action)
+    			<span title="$i18n.getText("queryfields.restricted.hint")">
+            		<dl class="${customField.id}-issuepicker-representation links-list long-field field-group">
+            			#foreach($iss in $selIssues)
+                            <dd style="background-color: #CCCCCC" class="mail_simple_issue" id="internal-${customField.id}_${$iss.key}">
+                                <div class="link-content">
+                                    <p>
+                                        <img src="$baseUrl$!{iss.getIssueTypeObject().getIconUrl()}" width="16" height="16" title="$!{iss.getIssueTypeObject().name}" alt="$!{iss.getIssueTypeObject().name}">
+                                            <span title="${iss.key}: $!{iss.summary}">
+                                                <a href="$baseUrl/browse/${iss.key}" class="link-title">${iss.key}</a>
+                                                <span class="link-summary">$!{iss.summary}</span>
+                                            </span>
+                            </p>
+                            <ul class="link-snapshot">
+                                <li class="priority">
+                            		#if ($iss.getPriorityObject())
+                                    <img src="$baseUrl$!{iss.getPriorityObject().getIconUrl()}" width="16" height="16" title="${iss.getPriorityObject().name}" alt="${iss.getPriorityObject().name}">
+                            		#end
+                            </li>
+                            <li class="status">
+                            	#if ($iss.getStatusObject())
+            						<img src="$baseUrl$!{iss.getStatusObject().getIconUrl()}" width="16" height="16" title="${iss.getStatusObject().name}" alt="${iss.getStatusObject().name}">
+                            	#end
+                            </li>
+                            </ul>
+                            </div>
+                            </dd>
+						#end
+                    </dl>
+        		</span>
+				<br>
+			#else
+        		#if(!$jqlNotSet && !$jqlNotValid)
+        	        <input class="hidden" type="text" id="cfs-query-multi-linker-autocomplete-input-$customField.id"/>
+                    <select class="hidden" name="$customField.id" id="$customField.id" multiple="multiple">
+                        #foreach($issuekey in $setVals.keySet())
+                            <option id="${customField.id}_${issuekey}" class="mail-issue-element" value="${issuekey}" selected="selected">${issuekey}</option>
+                        #end
+                    </select>
+        		#end
+			#end
+		#else
+			#if ($cfVals.entrySet().size() > 0)
+    			#customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
+                <span title="$i18n.getText("queryfields.restricted.hint")">
+    				#if($jqlNotSet || $jqlNotValid)
+						<input style="background-color: #CCCCCC" value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+                    #else
+                        <select style="background-color: #CCCCCC" class="select" id="$customField.id-presentation" multiple="multiple" size="$cfVals.entrySet().size()">
+                            #foreach($val in $cfVals.entrySet())
+                                <option style="color:white;" disabled #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
+                            #end
+                        </select>
+                        <select class="hidden" id="$customField.id" multiple="multiple" name="$customField.id" size="$cfVals.entrySet().size()">
+                            #foreach($val in $cfVals.entrySet())
+                                <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
+                            #end
+                        </select>
+					#end
+                </span>
+                #customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)
+			#else
+        		#if(!$jqlNotSet && !$jqlNotValid)
+                    <select class="hidden" id="$customField.id" multiple="multiple" name="$customField.id">
+                        #foreach($val in $cfVals.entrySet())
+                            <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
+                        #end
+                    </select>
+        		#end
+			#end
+		#end
+	#end
+#else
+	#if ($isAutocompleteView)
+		#if(!$jqlNotSet && !$jqlNotValid)
+	        <input class="hidden" type="text" id="cfs-query-multi-linker-autocomplete-input-$customField.id"/>
+            <select class="hidden" name="$customField.id" id="$customField.id" multiple="multiple">
                 #foreach($issuekey in $setVals.keySet())
                     <option id="${customField.id}_${issuekey}" class="mail-issue-element" value="${issuekey}" selected="selected">${issuekey}</option>
                 #end
-                </select>
-            </div>
-            <div class="description">$i18n.getText("queryfields.autocomplete.hint")</div>
-        </div>
-    </div>
-    #end
-    #controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)
-    <dl class="${customField.id}-issuepicker-representation links-list long-field field-group"></dl>
-#else
-    #customControlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams)
-    #if($jqlNotSet || $jqlNotValid)
-        <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
-    #else
-        #if ($value)
-            #set ($selectedValues = $value)
-        #end
-        <select class="select" id="$customField.id" multiple="multiple" name="$customField.id" size="5">
-        #foreach($val in $cfVals.entrySet())
-            <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
-        #end
-        </select>
-    #end
-    #customControlFooter ($action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)
+            </select>
+		#end
+	#else
+		#if(!$jqlNotSet && !$jqlNotValid)
+            <select class="hidden" id="$customField.id" multiple="multiple" name="$customField.id">
+                #foreach($val in $cfVals.entrySet())
+                    <option #if($setVals.containsKey($val.key))selected="selected"#end value="$val.key">${val.value}</option>
+                #end
+            </select>
+		#end
+	#end	
 #end

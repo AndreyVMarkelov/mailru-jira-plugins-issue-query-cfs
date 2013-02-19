@@ -7,7 +7,9 @@ package ru.mail.jira.plugins.lf;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;

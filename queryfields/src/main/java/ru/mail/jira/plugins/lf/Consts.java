@@ -52,4 +52,14 @@ public interface Consts
     String CF_KEY_QUERY_LINKER_FIELD = "ru.mail.jira.plugins.lf.queryfields:mailru-linker-field";
 
     String CF_KEY_QUERY_LINKED_FIELD = "ru.mail.jira.plugins.lf.queryfields:mailru-linked-field";
+
+    String LANG_TYPE_SQL = "SQL";
+
+    String LANG_TYPE_JQL = "JQL";
+
+    String SQL_RLINK = "#RLINK";
+    
+    String SQL_PATTERN = "#PATTERN";
+    
+    String SQL_ROWNUM = "#ROWNUM";
 }

@@ -13,7 +13,7 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 @XmlRootElement
-public class AutocompleteUniversalData
+public class AutocompleteUniversalData extends AbstractSQLDataBean
 {
     @XmlElement
     private String name;

@@ -6,6 +6,7 @@ package ru.mail.jira.plugins.lf;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import net.jcip.annotations.Immutable;
 
 /**

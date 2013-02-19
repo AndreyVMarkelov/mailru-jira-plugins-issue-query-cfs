@@ -10,7 +10,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import ru.mail.jira.plugins.lf.struct.IssueData;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.bc.issue.search.SearchService;
@@ -95,6 +97,8 @@ public class LinkerField
         params.put("i18n", getI18nBean());
         params.put("baseUrl", applicationProperties.getBaseUrl());
 
+        Utils.addViewAndEditParameters(params, field.getId());
+        
         Long prId;
         if (field.isAllProjects())
         {

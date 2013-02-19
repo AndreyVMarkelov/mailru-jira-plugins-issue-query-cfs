@@ -6,6 +6,8 @@ package ru.mail.jira.plugins.lf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.bc.issue.search.QueryContextConverter;
 import com.atlassian.jira.issue.customfields.searchers.transformer.CustomFieldInputHelper;
 import com.atlassian.jira.issue.customfields.searchers.transformer.MultiSelectCustomFieldSearchInputTransformer;
@@ -26,7 +28,6 @@ import com.atlassian.query.operand.MultiValueOperand;
 import com.atlassian.query.operand.Operand;
 import com.atlassian.query.operand.SingleValueOperand;
 import com.atlassian.query.operator.Operator;
-import com.atlassian.crowd.embedded.api.User;
 
 /**
  * Search input transformer.

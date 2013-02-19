@@ -22,3 +22,9 @@
         </table>
     </div>
 #end
+
+#if($canView)
+
+#else
+	
+#end

@@ -4,6 +4,7 @@
  */
 package ru.mail.jira.plugins.lf;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.issue.customfields.CustomFieldValueProvider;
 import com.atlassian.jira.issue.customfields.searchers.renderer.CustomFieldRenderer;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -12,7 +13,6 @@ import com.atlassian.jira.issue.search.searchers.impl.NamedTerminalClauseCollect
 import com.atlassian.jira.plugin.customfield.CustomFieldSearcherModuleDescriptor;
 import com.atlassian.jira.web.FieldVisibilityManager;
 import com.atlassian.query.Query;
-import com.atlassian.crowd.embedded.api.User;
 
 /**
  * Custom field renderer.
