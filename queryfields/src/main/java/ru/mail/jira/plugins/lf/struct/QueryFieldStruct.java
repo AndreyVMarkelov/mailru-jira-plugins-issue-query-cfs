@@ -27,6 +27,11 @@ public class QueryFieldStruct
     private String data;
 
     /**
+     * Field sql data.
+     */
+    private String sqlData;
+
+    /**
      * Custom field description.
      */
     private String descr;
@@ -40,6 +45,11 @@ public class QueryFieldStruct
      * Type of view: standard or with autocomplete for large chunks of data
      */
     private boolean isAutocompleteView;
+
+    /**
+     * false - jql queries true - sql queries
+     */
+    private boolean queryFlag;
 
     /**
      * Custom field name.
@@ -65,8 +75,8 @@ public class QueryFieldStruct
      * Constructor.
      */
     public QueryFieldStruct(long cfId, String name, String descr,
-        long projectId, String projectName, String data, boolean isAddNull,
-        boolean isAutocompleteView, List<String> options)
+        long projectId, String projectName, String data, String sqlData, boolean isAddNull,
+        boolean isAutocompleteView, boolean queryFlag, List<String> options)
     {
         this.cfId = cfId;
         this.name = name;
@@ -76,6 +86,7 @@ public class QueryFieldStruct
         this.data = data;
         this.isAddNull = isAddNull;
         this.isAutocompleteView = isAutocompleteView;
+        this.queryFlag = queryFlag;
         this.options = options;
     }
 
@@ -122,6 +133,16 @@ public class QueryFieldStruct
     public boolean isAutocompleteView()
     {
         return isAutocompleteView;
+    }
+    
+    public boolean getQueryFlag()
+    {
+        return queryFlag;
+    }
+
+    public String getSqlData()
+    {
+        return sqlData;
     }
 
     @Override

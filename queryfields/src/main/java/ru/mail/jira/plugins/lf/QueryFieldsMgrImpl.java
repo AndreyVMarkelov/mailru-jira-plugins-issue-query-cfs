@@ -124,4 +124,33 @@ public class QueryFieldsMgrImpl implements QueryFieldsMgr
             createPropKey(cfId, projId).concat(".autocompleteview"),
             Boolean.toString(data));
     }
+
+    @Override
+    public boolean getQueryFlag(long cfId)
+    {
+        String queryFlag = (String) getPluginSettings().get(
+            String.valueOf(cfId).concat(".queryflag"));
+        return Boolean.parseBoolean(queryFlag);
+    }
+
+    @Override
+    public void setQueryFlag(long cfId, boolean data)
+    {
+        getPluginSettings().put(
+            String.valueOf(cfId).concat(".queryflag"),
+            Boolean.toString(data));
+    }
+
+    @Override
+    public String getQueryFieldSQLData(long cfId, long projId)
+    {
+        return (String) getPluginSettings().get(createPropKey(cfId, projId).concat(".sql"));
+    }
+
+    @Override
+    public void setQueryFieldSQLData(long cfId, long projId, String data)
+    {
+        getPluginSettings().put(createPropKey(cfId, projId).concat(".sql"), data);
+        
+    }
 }

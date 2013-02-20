@@ -34,6 +34,11 @@ public interface QueryFieldsMgr
     String getQueryFieldData(long cfId, long projId);
 
     /**
+     * Get stored SQL data for the custom field.
+     */
+    String getQueryFieldSQLData(long cfId, long projId);
+
+    /**
      * Set "add null" option.
      */
     void setAddNull(long cfId, long projId, boolean data);
@@ -52,4 +57,13 @@ public interface QueryFieldsMgr
      * Put data for the custom field.
      */
     void setQueryFieldData(long cfId, long projId, String data);
+
+    /**
+     * Put SQL data for the custom field.
+     */
+    void setQueryFieldSQLData(long cfId, long projId, String data);
+
+    boolean getQueryFlag(long cfId);
+
+    void setQueryFlag(long cfId, boolean data);
 }

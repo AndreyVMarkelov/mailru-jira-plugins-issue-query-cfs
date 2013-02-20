@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.exception.VelocityException;
 
 import ru.mail.jira.plugins.lf.struct.AutocompleteUniversalData;
+import ru.mail.jira.plugins.lf.struct.ISQLDataBean;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
@@ -66,11 +67,15 @@ public class QueryAutocompleteService
         }
 
         String cfId = req.getParameter("cf_id");
+        String issueKey = req.getParameter("issue_id");
+        String pattern = req.getParameter("pattern");
+        String rowCount = req.getParameter("rowcount");
 
         AutocompleteUniversalData data;
-        List<AutocompleteUniversalData> values = null;
+        List<ISQLDataBean> values = null;
 
-        if (Utils.isValidStr(cfId))
+        if (Utils.isValidStr(cfId) && issueKey != null
+            && Utils.isValidLongParam(rowCount))
         {
             CustomField cf = ComponentManager.getInstance()
                 .getCustomFieldManager().getCustomFieldObject(cfId);
@@ -81,55 +86,86 @@ public class QueryAutocompleteService
                     .ok(i18n.getText("queryfields.service.error.cfid.invalid"))
                     .status(400).build();
             }
-
-            String jqlData;
-            if (cf.isAllProjects())
+            UserProjectHistoryManager userProjectHistoryManager = ComponentManager
+                .getComponentInstanceOfType(UserProjectHistoryManager.class);
+            Project currentProject = userProjectHistoryManager
+                .getCurrentProject(Permissions.BROWSE,
+                    authCtx.getLoggedInUser());
+            if (currentProject == null)
             {
-                jqlData = qfMgr.getQueryFieldData(cf.getIdAsLong(),
-                    Consts.PROJECT_ID_FOR_GLOBAL_CF);
+                log.error("QueryAutocompleteService::getCfVals - Current project is null");
+                return Response
+                    .ok(i18n.getText("queryfields.service.error.curproject"))
+                    .status(400).build();
+            }
+
+            boolean queryFlag = qfMgr.getQueryFlag(cf.getIdAsLong());
+            if (Consts.LANG_TYPE_SQL.equals(Utils.getKeyByQueryFlag(queryFlag)))
+            {
+                long projectId;
+                if (cf.isAllProjects())
+                {
+                    projectId = Consts.PROJECT_ID_FOR_GLOBAL_CF;
+                }
+                else
+                {
+                    projectId = currentProject.getId();
+                }
+                
+                String preparedQuery = qfMgr.getQueryFieldSQLData(
+                    cf.getIdAsLong(), projectId);
+                if (Utils.isValidStr(preparedQuery))
+                {
+                    preparedQuery = preparedQuery.replaceAll(Consts.SQL_RLINK,
+                        issueKey);
+                    preparedQuery = preparedQuery.replaceAll(
+                        Consts.SQL_PATTERN, pattern);
+                    preparedQuery = preparedQuery.replaceAll(Consts.SQL_ROWNUM,
+                        rowCount);
+
+                    values = Utils.executeSQLQuery(preparedQuery,
+                        AutocompleteUniversalData.class);
+                }
             }
             else
             {
-                UserProjectHistoryManager userProjectHistoryManager = ComponentManager
-                    .getComponentInstanceOfType(UserProjectHistoryManager.class);
-                Project currentProject = userProjectHistoryManager
-                    .getCurrentProject(Permissions.BROWSE,
-                        authCtx.getLoggedInUser());
-                if (currentProject == null)
+                String jqlData;
+                if (cf.isAllProjects())
                 {
-                    log.error("QueryAutocompleteService::getCfVals - Current project is null");
-                    return Response
-                        .ok(i18n.getText("queryfields.service.error.curproject"))
-                        .status(400).build();
+                    jqlData = qfMgr.getQueryFieldData(cf.getIdAsLong(),
+                        Consts.PROJECT_ID_FOR_GLOBAL_CF);
                 }
-                jqlData = qfMgr.getQueryFieldData(cf.getIdAsLong(),
-                    currentProject.getId());
-            }
-
-            List<Issue> issues = Utils.executeJQLQuery(jqlData);
-            values = new ArrayList<AutocompleteUniversalData>(issues.size());
-            for (Issue issue : issues)
-            {
-                String icon;
-                data = new AutocompleteUniversalData();
-                data.setName(issue.getKey());
-                data.setDescription(issue.getSummary());
-                if (issue.getIssueTypeObject() != null)
+                else
                 {
-                    data.setType(issue.getIssueTypeObject().getName());
-                    icon = issue.getIssueTypeObject().getIconUrl();
-                    if (Utils.isValidStr(icon))
+                    jqlData = qfMgr.getQueryFieldData(cf.getIdAsLong(),
+                        currentProject.getId());
+                }
+
+                List<Issue> issues = Utils.executeJQLQuery(jqlData);
+                values = new ArrayList<ISQLDataBean>(issues.size());
+                for (Issue issue : issues)
+                {
+                    String icon;
+                    data = new AutocompleteUniversalData();
+                    data.setName(issue.getKey());
+                    data.setDescription(issue.getSummary());
+                    if (issue.getIssueTypeObject() != null)
                     {
-                        data.setTypeimage(icon);
+                        data.setType(issue.getIssueTypeObject().getName());
+                        icon = issue.getIssueTypeObject().getIconUrl();
+                        if (Utils.isValidStr(icon))
+                        {
+                            data.setTypeimage(icon);
+                        }
                     }
-                }
 
-                if (issue.getStatusObject() != null)
-                {
-                    data.setState(issue.getStatusObject().getName());
-                }
+                    if (issue.getStatusObject() != null)
+                    {
+                        data.setState(issue.getStatusObject().getName());
+                    }
 
-                values.add(data);
+                    values.add(data);
+                }
             }
         }
         else
@@ -144,7 +180,7 @@ public class QueryAutocompleteService
         Response resp;
         if (values != null)
         {
-            GenericEntity<List<AutocompleteUniversalData>> retVal = new GenericEntity<List<AutocompleteUniversalData>>(
+            GenericEntity<List<ISQLDataBean>> retVal = new GenericEntity<List<ISQLDataBean>>(
                 values)
             {
             };

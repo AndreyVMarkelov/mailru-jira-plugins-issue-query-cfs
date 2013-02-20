@@ -1,8 +1,9 @@
 /*
- * Created by Andrey Markelov 29-08-2012.
- * Copyright Mail.Ru Group 2012. All rights reserved.
+ * Created by Andrey Markelov 29-08-2012. Copyright Mail.Ru Group 2012. All
+ * rights reserved.
  */
 package ru.mail.jira.plugins.lf;
+
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -10,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.mail.jira.plugins.lf.struct.AutocompleteUniversalData;
+import ru.mail.jira.plugins.lf.struct.ISQLDataBean;
 import ru.mail.jira.plugins.lf.struct.IssueData;
 
 import com.atlassian.crowd.embedded.api.User;
@@ -24,17 +27,21 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.user.UserProjectHistoryManager;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
 import com.atlassian.sal.api.ApplicationProperties;
+
 
 /**
  * Linked field.
  * 
  * @author Andrey Markelov
  */
-public class LinkedField
-    extends CalculatedCFType
+public class LinkedField extends CalculatedCFType
 {
     /**
      * PlugIn data manager.
@@ -45,42 +52,40 @@ public class LinkedField
      * Search service.
      */
     private final SearchService searchService;
-    
-    
+
     private final ApplicationProperties applicationProperties;
+
+    private final UserProjectHistoryManager userProjectHistoryManager;
 
     /**
      * Constructor.
      */
-    public LinkedField(
-        QueryFieldsMgr qfMgr,
-        SearchService searchService, ApplicationProperties applicationProperties)
+    public LinkedField(QueryFieldsMgr qfMgr, SearchService searchService,
+        ApplicationProperties applicationProperties,
+        UserProjectHistoryManager userProjectHistoryManager)
     {
         this.qfMgr = qfMgr;
         this.searchService = searchService;
         this.applicationProperties = applicationProperties;
+        this.userProjectHistoryManager = userProjectHistoryManager;
     }
 
     @Override
-    public Object getSingularObjectFromString(
-        final String string)
-    throws FieldValidationException
+    public Object getSingularObjectFromString(final String string)
+        throws FieldValidationException
     {
         return string;
     }
 
     @Override
-    public String getStringFromSingularObject(
-        final Object value)
+    public String getStringFromSingularObject(final Object value)
     {
         assertObjectImplementsType(String.class, value);
         return StringConverterImpl.convertNullToEmpty((String) value);
     }
 
     @Override
-    public Object getValueFromIssue(
-        CustomField field,
-        Issue issue)
+    public Object getValueFromIssue(CustomField field, Issue issue)
     {
         if (issue != null && issue.getKey() != null)
         {
@@ -93,160 +98,268 @@ public class LinkedField
     }
 
     @Override
-    public Map<String, Object> getVelocityParameters(
-        Issue issue,
-        CustomField field,
-        FieldLayoutItem fieldLayoutItem)
+    public Map<String, Object> getVelocityParameters(Issue issue,
+        CustomField field, FieldLayoutItem fieldLayoutItem)
     {
-        Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
+        Map<String, Object> params = super.getVelocityParameters(issue, field,
+            fieldLayoutItem);
         params.put("i18n", getI18nBean());
         params.put("baseUrl", applicationProperties.getBaseUrl());
-        
+
         Utils.addViewAndEditParameters(params, field.getId());
-        
-        String jqlData = null;
-        List<String> options = null;
-        if (field.isAllProjects())
+
+        Map<String, IssueData> cfVals = new LinkedHashMap<String, IssueData>();
+
+        boolean queryFlag = qfMgr.getQueryFlag(field.getIdAsLong());
+        if (Consts.LANG_TYPE_SQL.equals(Utils.getKeyByQueryFlag(queryFlag)))
         {
-            jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
-            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), Consts.PROJECT_ID_FOR_GLOBAL_CF);
+            // ignore jql flags
+            params.put("jqlNotValid", Boolean.FALSE);
+            params.put("jqlNotSet", Boolean.FALSE);
+            params.put("isError", Boolean.FALSE);
+
+            long projectId;
+            if (field.isAllProjects())
+            {
+                projectId = Consts.PROJECT_ID_FOR_GLOBAL_CF;
+            }
+            else
+            {
+                if (issue == null)
+                {
+                    JiraAuthenticationContext authCtx = ComponentManager
+                        .getInstance().getJiraAuthenticationContext();
+                    Project currentProject = userProjectHistoryManager
+                        .getCurrentProject(Permissions.BROWSE,
+                            authCtx.getLoggedInUser());
+                    if (currentProject != null)
+                    {
+                        projectId = currentProject.getId();
+                    }
+                    else
+                    {
+                        params.put("cfVals", cfVals);
+                        return params;
+                    }
+                }
+                else
+                {
+                    projectId = issue.getProjectObject().getId();
+                }
+            }
+
+            String preparedQuery = qfMgr.getQueryFieldSQLData(
+                field.getIdAsLong(), projectId);
+            if (Utils.isValidStr(preparedQuery))
+            {
+                String issueKey = (issue != null && issue.getKey() != null) ? issue.getKey()
+                    : Consts.EMPTY_VALUE;
+                preparedQuery = preparedQuery.replaceAll(Consts.SQL_RLINK,
+                    issueKey);
+                preparedQuery = preparedQuery.replaceAll(Consts.SQL_PATTERN,
+                    Consts.EMPTY_VALUE);
+                preparedQuery = preparedQuery.replaceAll(Consts.SQL_ROWNUM,
+                    Consts.SQL_MAX_LIMIT);
+
+                List<ISQLDataBean> values = Utils.executeSQLQuery(
+                    preparedQuery, AutocompleteUniversalData.class);
+                for (ISQLDataBean dataPortion : values)
+                {
+                    // TODO revise options mech
+                    StringBuilder sb = new StringBuilder(dataPortion.getName());
+                    if (dataPortion.getDescription() != null)
+                    {
+                        sb.append(": ");
+                        sb.append(dataPortion.getDescription());
+                    }
+                    IssueData issueData = new IssueData(sb.toString(),
+                        Consts.EMPTY_VALUE);
+                    cfVals.put(dataPortion.getName(), issueData);
+                }
+            }
+            params.put("cfVals", cfVals);
         }
         else
         {
-            if (issue == null)
+            String jqlData = null;
+            List<String> options = null;
+            if (field.isAllProjects())
             {
-                return params;
+                jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(),
+                    Consts.PROJECT_ID_FOR_GLOBAL_CF);
+                options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(),
+                    Consts.PROJECT_ID_FOR_GLOBAL_CF);
             }
-            jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue.getProjectObject().getId());
-            options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), issue.getProjectObject().getId());
-        }
-
-        if (!Utils.isValidStr(jqlData))
-        {
-            params.put("jqlNotSet", Boolean.TRUE);
-            return params;
-        }
-        params.put("jqlNotSet", Boolean.FALSE);
-
-        String jqlQuery = jqlData;
-        if (jqlData.startsWith(Consts.REVERSE_LINK_PART))
-        {
-            String reserveData = jqlData.substring(Consts.REVERSE_LINK_PART.length());
-            int inx = reserveData.indexOf("|");
-            if (inx < 0)
+            else
             {
-                params.put("jqlNotValid", Boolean.TRUE);
-                return params;
+                if (issue == null)
+                {
+                    return params;
+                }
+                jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), issue
+                    .getProjectObject().getId());
+                options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(),
+                    issue.getProjectObject().getId());
             }
 
-            String proj = reserveData.substring(0, inx);
-            String cfName = reserveData.substring(inx + 1);
-
-            if (issue.getKey() == null)
+            if (!Utils.isValidStr(jqlData))
             {
+                params.put("jqlNotSet", Boolean.TRUE);
                 return params;
             }
-            jqlQuery = String.format(Consts.RLINK_QUERY_PATTERN, proj, cfName, issue.getKey());
-        }
-        else
-        {
-            if (jqlQuery.contains(Consts.ISSUE_RLINK))
+            params.put("jqlNotSet", Boolean.FALSE);
+
+            String jqlQuery = jqlData;
+            if (jqlData.startsWith(Consts.REVERSE_LINK_PART))
             {
+                String reserveData = jqlData.substring(Consts.REVERSE_LINK_PART
+                    .length());
+                int inx = reserveData.indexOf("|");
+                if (inx < 0)
+                {
+                    params.put("jqlNotValid", Boolean.TRUE);
+                    return params;
+                }
+
+                String proj = reserveData.substring(0, inx);
+                String cfName = reserveData.substring(inx + 1);
+
                 if (issue.getKey() == null)
                 {
                     return params;
                 }
-                jqlQuery = jqlQuery.replace(Consts.ISSUE_RLINK, issue.getKey());
+                jqlQuery = String.format(Consts.RLINK_QUERY_PATTERN, proj,
+                    cfName, issue.getKey());
             }
-        }
-
-        User user = ComponentManager.getInstance().getJiraAuthenticationContext().getLoggedInUser();
-        SearchService.ParseResult parseResult = searchService.parseQuery(user, jqlQuery);
-        if (parseResult.isValid())
-        {
-            params.put("jqlNotValid", Boolean.FALSE);
-            Query query = parseResult.getQuery();
-            try
+            else
             {
-                Map<String, IssueData> cfVals = new LinkedHashMap<String, IssueData>();
-                SearchResults results = searchService.search(user, query, PagerFilter.getUnlimitedFilter());
-                List<Issue> issues = results.getIssues();
-                for (Issue i : issues)
+                if (jqlQuery.contains(Consts.ISSUE_RLINK))
                 {
-                    StringBuilder sb = new StringBuilder();
-                    if (options.contains("status"))
+                    if (issue.getKey() == null)
                     {
-                        sb.append(getI18nBean().getText("queryfields.opt.status")).append(": ").append(i.getStatusObject().getName());
+                        return params;
                     }
-                    if (options.contains("assignee") && i.getAssigneeUser() != null)
-                    {
-                        if (sb.length() > 0)
-                        {
-                            sb.append(", ");
-                        }
-                        User aUser = i.getAssigneeUser();
-                        String encodedUser;
-                        try
-                        {
-                            encodedUser = URLEncoder.encode(aUser.getName(), "UTF-8");
-                        }
-                        catch (UnsupportedEncodingException e)
-                        {
-                            //--> impossible
-                            encodedUser = aUser.getName();
-                        }
-
-                        sb.append(getI18nBean().getText("queryfields.opt.assignee")).append(": ")
-                            .append("<a class='user-hover' rel='").append(aUser.getName()).append("' id='issue_summary_assignee_'")
-                            .append(aUser.getName()).append("' href='/secure/ViewProfile.jspa?name='").append(encodedUser)
-                            .append("'>").append(aUser.getDisplayName()).append("</a>");
-                    }
-                    if (options.contains("priority") && i.getPriorityObject() != null)
-                    {
-                        if (sb.length() > 0)
-                        {
-                            sb.append(", ");
-                        }
-                        sb.append(getI18nBean().getText("queryfields.opt.priority")).append(": ").append(i.getPriorityObject().getName());
-                    }
-                    if (options.contains("due") && i.getDueDate() != null)
-                    {
-                        if (sb.length() > 0)
-                        {
-                            sb.append(", ");
-                        }
-                        sb.append(getI18nBean().getText("queryfields.opt.due")).append(": ").append(ComponentAccessor.getJiraAuthenticationContext().getOutlookDate().format(i.getDueDate()));
-                    }
-
-                    if (sb.length() > 0)
-                    {
-                        sb.insert(0, " (");
-                        sb.append(")");
-                    }
-
-                    IssueData issueData;
-                    if (options.contains("key"))
-                    {
-                        issueData = new IssueData(i.getKey().concat(":").concat(i.getSummary()), sb.toString());
-                    }
-                    else
-                    {
-                        issueData = new IssueData(i.getSummary(), sb.toString());
-                    }
-                    cfVals.put(i.getKey(), issueData);
+                    jqlQuery = jqlQuery.replace(Consts.ISSUE_RLINK,
+                        issue.getKey());
                 }
-                params.put("isError", Boolean.FALSE);
-                params.put("cfVals", cfVals);
             }
-            catch (SearchException e)
+
+            User user = ComponentManager.getInstance()
+                .getJiraAuthenticationContext().getLoggedInUser();
+            SearchService.ParseResult parseResult = searchService.parseQuery(
+                user, jqlQuery);
+            if (parseResult.isValid())
             {
-                params.put("isError", Boolean.TRUE);
+                params.put("jqlNotValid", Boolean.FALSE);
+                Query query = parseResult.getQuery();
+                try
+                {
+                    SearchResults results = searchService.search(user, query,
+                        PagerFilter.getUnlimitedFilter());
+                    List<Issue> issues = results.getIssues();
+                    for (Issue i : issues)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        if (options.contains("status"))
+                        {
+                            sb.append(
+                                getI18nBean().getText("queryfields.opt.status"))
+                                .append(": ")
+                                .append(i.getStatusObject().getName());
+                        }
+                        if (options.contains("assignee")
+                            && i.getAssigneeUser() != null)
+                        {
+                            if (sb.length() > 0)
+                            {
+                                sb.append(", ");
+                            }
+                            User aUser = i.getAssigneeUser();
+                            String encodedUser;
+                            try
+                            {
+                                encodedUser = URLEncoder.encode(
+                                    aUser.getName(), "UTF-8");
+                            }
+                            catch (UnsupportedEncodingException e)
+                            {
+                                // --> impossible
+                                encodedUser = aUser.getName();
+                            }
+
+                            sb.append(
+                                getI18nBean().getText(
+                                    "queryfields.opt.assignee"))
+                                .append(": ")
+                                .append("<a class='user-hover' rel='")
+                                .append(aUser.getName())
+                                .append("' id='issue_summary_assignee_'")
+                                .append(aUser.getName())
+                                .append(
+                                    "' href='/secure/ViewProfile.jspa?name='")
+                                .append(encodedUser).append("'>")
+                                .append(aUser.getDisplayName()).append("</a>");
+                        }
+                        if (options.contains("priority")
+                            && i.getPriorityObject() != null)
+                        {
+                            if (sb.length() > 0)
+                            {
+                                sb.append(", ");
+                            }
+                            sb.append(
+                                getI18nBean().getText(
+                                    "queryfields.opt.priority")).append(": ")
+                                .append(i.getPriorityObject().getName());
+                        }
+                        if (options.contains("due") && i.getDueDate() != null)
+                        {
+                            if (sb.length() > 0)
+                            {
+                                sb.append(", ");
+                            }
+                            sb.append(
+                                getI18nBean().getText("queryfields.opt.due"))
+                                .append(": ")
+                                .append(
+                                    ComponentAccessor
+                                        .getJiraAuthenticationContext()
+                                        .getOutlookDate()
+                                        .format(i.getDueDate()));
+                        }
+
+                        if (sb.length() > 0)
+                        {
+                            sb.insert(0, " (");
+                            sb.append(")");
+                        }
+
+                        IssueData issueData;
+                        if (options.contains("key"))
+                        {
+                            issueData = new IssueData(i.getKey().concat(":")
+                                .concat(i.getSummary()), sb.toString());
+                        }
+                        else
+                        {
+                            issueData = new IssueData(i.getSummary(),
+                                sb.toString());
+                        }
+                        cfVals.put(i.getKey(), issueData);
+                    }
+                    params.put("isError", Boolean.FALSE);
+                    params.put("cfVals", cfVals);
+                }
+                catch (SearchException e)
+                {
+                    params.put("isError", Boolean.TRUE);
+                }
             }
-        }
-        else
-        {
-            params.put("jqlNotValid", Boolean.TRUE);
-            return params;
+            else
+            {
+                params.put("jqlNotValid", Boolean.TRUE);
+                return params;
+            }
         }
 
         return params;

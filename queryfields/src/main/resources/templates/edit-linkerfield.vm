@@ -1,88 +1,89 @@
 ## Created by Andrey Markelov 29-08-2012.
 ## Copyright Mail.Ru Group 2012. All rights reserved.
 #if($canView)
-	#if($canEdit)
-		#controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+    #if($canEdit)
+        #controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
         #if ($isAutocompleteView)
             #if($jqlNotSet || $jqlNotValid)
-            <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
-            #else
-            <div class="cfs-query-linker-autocomplete" input-id="$customField.id" cf-id="$customField.id" cf-base-url="$baseUrl">
-                <div class="ajax_autocomplete atlassian-autocomplete" id="${customField.id}_container">
-                    <input type="text" id="$customField.id" value="$selected" class="text long-field" name="$customField.id" autocomplete="off" />
-                    <a href="javascript:upChooseValFromNewWindow('$customField.id', '$baseUrl', '$customField.id', '$prId');" class="popup-trigger">
-                    <img height="16" src="$baseUrl/images/icons/add_16.gif" title="Select value" width="16"></a>
-                    <div class="description">$i18n.getText("queryfields.autocomplete.hint")</div>
-                </div>
-            </div>
+                <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+                #else
+                    <div class="cfs-query-linker-autocomplete" input-id="$customField.id" cf-id="$customField.id" issue-id="$!issue.key" cf-base-url="$baseUrl">
+                        <div class="ajax_autocomplete atlassian-autocomplete" id="${customField.id}_container">
+                            <input type="text" id="$customField.id" value="$selected" class="text long-field" name="$customField.id" autocomplete="off" />
+                            <a href="javascript:upChooseValFromNewWindow('$customField.id', '$baseUrl', '$customField.id', '$prId');" class="popup-trigger">
+                                <img height="16" src="$baseUrl/images/icons/add_16.gif" title="Select value" width="16"></a>
+                                <div class="description">$i18n.getText("queryfields.autocomplete.hint")</div>
+</div>
+                        </div>
             #end
+            #else
+                #if($jqlNotSet || $jqlNotValid)
+                    <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+                    #else
+                        <input type="hidden" name="$customField.id" value="$selected" id="$customField.id" class="textfield" readonly="readonly"/>
+                        <select id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');">
+                            #foreach($val in $cfVals.entrySet())
+                                <option value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
+                            #end
+                        </select>
+                #end
+        #end
+        #controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)
         #else
-            #if($jqlNotSet || $jqlNotValid)
-            <input value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
-            #else
-            <input type="hidden" name="$customField.id" value="$selected" id="$customField.id" class="textfield" readonly="readonly"/>
-            <select id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');">
-            #foreach($val in $cfVals.entrySet())
-                <option value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
-            #end
-            </select>
-            #end
-		#end
-		#controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)
-	#else
-		#if($selected && $selected != "")
-			#controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
-			<span title="$i18n.getText("queryfields.restricted.hint")">
-        		#if ($isAutocompleteView)
-                    #if($jqlNotSet || $jqlNotValid)
-    					<input style="background-color: #CCCCCC" value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
-                    #else
-    					<input style="background-color: #CCCCCC" type="text" id="$customField.id" value="$selected" class="text long-field" name="$customField.id" readonly/>
-    				#end
-        		#else
-                    #if($jqlNotSet || $jqlNotValid)
-						<input style="background-color: #CCCCCC" value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
-                    #else
-                    <input type="hidden" name="$customField.id" value="$selected" id="$customField.id" class="textfield" readonly="readonly"/>
-                    <select style="background-color: #CCCCCC" id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');" readonly>
-                        #foreach($val in $cfVals.entrySet())
-                            <option disabled value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
+            #if($selected && $selected != "")
+                #controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+                <span title="$i18n.getText("queryfields.restricted.hint")">
+                    #if ($isAutocompleteView)
+                        #if($jqlNotSet || $jqlNotValid)
+                            <input style="background-color: #CCCCCC" value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+                            #else
+                                <input style="background-color: #CCCCCC" type="text" id="$customField.id" value="$selected" class="text long-field" name="$customField.id" readonly/>
                         #end
-                    </select>
+                        #else
+                            #if($jqlNotSet || $jqlNotValid)
+                                <input style="background-color: #CCCCCC" value='$i18n.getText("queryfields.field.error")' class='textfield' readonly='readonly'/>
+                                #else
+                                    <input type="hidden" name="$customField.id" value="$selected" id="$customField.id" class="textfield" readonly="readonly"/>
+                                    <select style="background-color: #CCCCCC" id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');" readonly>
+                                        #foreach($val in $cfVals.entrySet())
+                                            <option disabled value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
+                                        #end
+                                    </select>
+                            #end
                     #end
-    			#end
-			</span>
-			#controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)
-		#else
-			#if ($isAutocompleteView)
+                </span>
+                #controlFooter ($action $fieldLayoutItem.fieldDescription $displayParameters.noHeader)
+                #else
+                    #if ($isAutocompleteView)
+                        #if(!$jqlNotSet && !$jqlNotValid)
+                            <input type="text" id="$customField.id" value="$!selected" class="hidden" name="$customField.id" readonly/>
+                        #end
+                        #else
+                            #if(!$jqlNotSet && !$jqlNotValid)
+                                <input type="hidden" name="$customField.id" value="$!selected" id="$customField.id" class="textfield" readonly="readonly"/>
+                                <select class="hidden" id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');">
+                                    #foreach($val in $cfVals.entrySet())
+                                        <option value="$val.key" #if($val.key == $!selected)selected="selected"#end>${val.value}</option>
+                                    #end
+                                </select>
+                            #end
+                    #end
+            #end
+    #end
+    #else
+        #if ($isAutocompleteView)
+            #if(!$jqlNotSet && !$jqlNotValid)
+                <input type="text" id="$customField.id" value="$!selected" class="hidden" name="$customField.id" readonly/>
+            #end
+            #else
                 #if(!$jqlNotSet && !$jqlNotValid)
-					<input type="text" id="$customField.id" value="$!selected" class="hidden" name="$customField.id" readonly/>
-				#end
-    		#else
-                #if(!$jqlNotSet && !$jqlNotValid)
-                    <input type="hidden" name="$customField.id" value="$!selected" id="$customField.id" class="textfield" readonly="readonly"/>
+                    <input type="hidden" name="$customField.id" value="$!selected" id="$customField.id" readonly="readonly"/>
                     <select class="hidden" id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');">
                         #foreach($val in $cfVals.entrySet())
-                            <option value="$val.key" #if($val.key == $!selected)selected="selected"#end>${val.value}</option>
+                            <option value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
                         #end
                     </select>
                 #end
-			#end
-		#end
-	#end
-#else
-	#if ($isAutocompleteView)
-		#if(!$jqlNotSet && !$jqlNotValid)
-			<input type="text" id="$customField.id" value="$!selected" class="hidden" name="$customField.id" readonly/>
-		#end
-	#else
-		#if(!$jqlNotSet && !$jqlNotValid)
-			<input type="hidden" name="$customField.id" value="$!selected" id="$customField.id" readonly="readonly"/>
-            <select class="hidden" id="linker$customField.id" name="linker$customField.id" onchange="setQueryFieldValue('linker$customField.id', '$customField.id');">
-                #foreach($val in $cfVals.entrySet())
-                    <option value="$val.key" #if($val.key == $selected)selected="selected"#end>${val.value}</option>
-                #end
-            </select>
-		#end
-	#end
+        #end
 #end
+    

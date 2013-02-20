@@ -62,4 +62,6 @@ public interface Consts
     String SQL_PATTERN = "#PATTERN";
     
     String SQL_ROWNUM = "#ROWNUM";
+    
+    String SQL_MAX_LIMIT = "1000";
 }

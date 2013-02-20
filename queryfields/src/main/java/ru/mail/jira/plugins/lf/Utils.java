@@ -71,6 +71,21 @@ public class Utils
     {
         return (str != null && str.length() > 0);
     }
+    
+    public static boolean isValidLongParam(String str)
+    {
+        boolean isValidLong = true;
+
+        try
+        {
+            Long.valueOf(str);
+        }
+        catch (NumberFormatException e)
+        {
+            isValidLong = false;
+        }
+        return isValidLong;
+    }
 
     /**
      * Convert string list to string.
@@ -197,6 +212,7 @@ public class Utils
             {
                 log.error("Utils::executeSQLQuery - SQL Exception occured while executing query: "
                     + e.getMessage());
+                System.out.println(e.getMessage());
                 data = null;
             }
             catch (InstantiationException e)

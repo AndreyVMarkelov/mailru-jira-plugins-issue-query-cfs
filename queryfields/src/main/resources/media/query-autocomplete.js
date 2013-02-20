@@ -11,57 +11,67 @@ var QUERY_PREVENT_DEFAULT_FLAG = false; // firefox has problems with
 // preventDefault
 
 // hints
-var cfQueryHistorySearchHint = AJS.I18n.getText("mailru.cf.query.js.historysearch");
+var cfQueryHistorySearchHint = AJS.I18n
+		.getText("mailru.cf.query.js.historysearch");
 var cfQueryMoreElemsHint = AJS.I18n.getText("mailru.cf.query.js.moreelems");
 
 function getCFQueryMatchingElementsHint(nElems) {
-    return AJS.I18n.getText("mailru.cf.query.js.matchingelems", nElems)
+	return AJS.I18n.getText("mailru.cf.query.js.matchingelems", nElems)
 }
 
-jQuery(document).ready(function() {
-    JIRA.bind(
-        JIRA.Events.NEW_CONTENT_ADDED,
-        function(e, context) {
-            manageQueryCfsAutocompleteFields('.cfs-query-linker-autocomplete');
-            manageQueryCfsAutocompleteFields('.cfs-query-multi-linker-autocomplete');
-            initSelectedIssuesList('.cfs-query-multi-linker-selected-list');
-        }
-    );
-});
+jQuery(document)
+		.ready(
+				function() {
+					JIRA
+							.bind(
+									JIRA.Events.NEW_CONTENT_ADDED,
+									function(e, context) {
+										manageQueryCfsAutocompleteFields('.cfs-query-linker-autocomplete');
+										manageQueryCfsAutocompleteFields('.cfs-query-multi-linker-autocomplete');
+										initSelectedIssuesList('.cfs-query-multi-linker-selected-list');
+									});
+				});
 
 function manageQueryCfsAutocompleteFields(classname) {
-    var elems = jQuery(classname);
+	var elems = jQuery(classname);
 
-    if (elems.length > 0) {
-        for ( var i = 0; i < elems.length; i++) {
-            var element = AJS.$("#" + elems[i].getAttribute("input-id"));
-            if (!element.hasClass('gr-autocomplete-inited')) {
-                element.addClass("gr-autocomplete-inited");
-                element.cfsqueryautocomplete(elems[i].getAttribute("cf-id"), elems[i].getAttribute("cf-base-url"), queryAutocompleteRestUrl, 2);
-            }
-        }
-    }
+	if (elems.length > 0) {
+		for ( var i = 0; i < elems.length; i++) {
+			var element = AJS.$("#" + elems[i].getAttribute("input-id"));
+			if (!element.hasClass('gr-autocomplete-inited')) {
+				element.addClass("gr-autocomplete-inited");
+				element.cfsqueryautocomplete(elems[i].getAttribute("cf-id"),
+						elems[i].getAttribute("issue-id"), elems[i]
+								.getAttribute("cf-base-url"),
+						queryAutocompleteRestUrl, 2);
+			}
+		}
+	}
 };
 
 function initSelectedIssuesList(classname) {
-    var elems = jQuery(classname);
+	var elems = jQuery(classname);
 
-    if (elems.length > 0) {
-        for ( var i = 0; i < elems.length; i++) {
-            var cfId = elems[i].getAttribute("cf-id");
-            var restUrl = elems[i].getAttribute("base-url") + queryAutocompleteRestUrl;
-            var issueOptions = jQuery('#' + cfId).children('.mail-issue-element');
-            if (issueOptions.length > 0) {
-                for ( var j = 0; j < issueOptions.length; j++) {
-                    setSelectedIssue(restUrl, cfId, issueOptions[j].getAttribute("value"));
-                }
-            }
-        }
-    }
+	if (elems.length > 0) {
+		for ( var i = 0; i < elems.length; i++) {
+			var cfId = elems[i].getAttribute("cf-id");
+			var restUrl = elems[i].getAttribute("base-url")
+					+ queryAutocompleteRestUrl;
+			var issueOptions = jQuery('#' + cfId).children(
+					'.mail-issue-element');
+			if (issueOptions.length > 0) {
+				for ( var j = 0; j < issueOptions.length; j++) {
+					setSelectedIssue(restUrl, cfId, issueOptions[j]
+							.getAttribute("value"));
+				}
+			}
+		}
+	}
 };
 
 (function($) {
-	$.fn.cfsqueryautocomplete = function(cfId, baseUrl, restUrlPart, minlength) {
+	$.fn.cfsqueryautocomplete = function(cfId, issueId, baseUrl, restUrlPart,
+			minlength) {
 		callback = typeof minlength == "function" ? minlength
 				: (typeof callback == "function" ? callback : function() {
 				});
@@ -104,7 +114,12 @@ function initSelectedIssuesList(classname) {
 							type : "POST",
 							dataType : "json",
 							data : {
-								"cf_id" : cfId
+								"cf_id" : cfId,
+								"issue_id" : issueId,
+								"pattern" : currentTextfieldValue,
+								"rowcount" : QUERY_MAX_DISPLAY_ROWS + 1
+							// we need to know if there are more elements to
+							// announce user
 							},
 							async : false,
 							error : function(xhr, ajaxOptions, thrownError) {
@@ -383,41 +398,42 @@ function initSelectedIssuesList(classname) {
 })(jQuery);
 
 function removeSelectedIssue(cfId, issueId) {
-    var element = jQuery('#internal-' + cfId + '_' + issueId);
+	var element = jQuery('#internal-' + cfId + '_' + issueId);
 
-    if (element.length == 1) {
-        element.remove();
-    }
+	if (element.length == 1) {
+		element.remove();
+	}
 
-    var associatedOption = jQuery('#' + cfId + '_' + issueId);
+	var associatedOption = jQuery('#' + cfId + '_' + issueId);
 
-    if (associatedOption.length == 1) {
-        associatedOption.remove();
-    }
+	if (associatedOption.length == 1) {
+		associatedOption.remove();
+	}
 };
 
 function setSelectedIssue(restUrl, cfId, issueId) {
-    jQuery.ajax({
-        url : restUrl + queryIssueHtmlMethod,
-        type : "POST",
-        dataType : "json",
-        data : {
-            "cf_id" : cfId,
-            "cf_value" : issueId
-        },
-        async : false,
-        error : function(xhr, ajaxOptions, thrownError) {
-            handleError(xhr, ajaxOptions, thrownError)
-        },
-        success : function(data) {
-            if (jQuery('.' + cfId + queryRepresentationTagPostfix).length > 0) {
-                if (data) {
-                    var representation = jQuery('.' + cfId + queryRepresentationTagPostfix);
-                    if (representation.length == 1) {
-                        representation.html(representation.html() + data.html);
-                    }
-                }
-            }
-        }
-    });
+	jQuery.ajax({
+		url : restUrl + queryIssueHtmlMethod,
+		type : "POST",
+		dataType : "json",
+		data : {
+			"cf_id" : cfId,
+			"cf_value" : issueId
+		},
+		async : false,
+		error : function(xhr, ajaxOptions, thrownError) {
+			handleError(xhr, ajaxOptions, thrownError)
+		},
+		success : function(data) {
+			if (jQuery('.' + cfId + queryRepresentationTagPostfix).length > 0) {
+				if (data) {
+					var representation = jQuery('.' + cfId
+							+ queryRepresentationTagPostfix);
+					if (representation.length == 1) {
+						representation.html(representation.html() + data.html);
+					}
+				}
+			}
+		}
+	});
 };

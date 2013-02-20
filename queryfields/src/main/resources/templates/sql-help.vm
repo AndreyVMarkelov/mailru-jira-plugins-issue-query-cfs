@@ -1,0 +1,69 @@
+<h2 style="color:#0000CC">Tokens</h2>
+<p>
+    <b>#PATTERN</b>
+    - means search pattern, every occurence of this token will be replaced with user input string</p>
+    <p>
+        <b>#RLINK</b>
+        - every occurence of this token will be replaced with current issue key, or with an empty string in create mode</p>
+        <p>
+            <b>#ROWNUM</b>
+            - every occurence of this token will be replaced with max row limit number, that is passed from javascript</p>
+            <br>
+                <h2 style="color:#0000CC">Aliases</h2>
+                <p>When you write an SQL query you should use aliases listed below. This is because universal structures, used inside. In differernt cases aliases mean different things</p>
+                <p>
+                    <b>NAME</b>
+                    - <i>required</i>
+                    alias. Means a key value</p>
+                    <p>
+                        <b>DESCRIPTION</b>
+                        - <i>optional</i>
+                        alias. Means a summary or description</p>
+                        <p>
+                            <b>TYPE</b>
+                            - <i>optional</i>
+                            alias. Means a type</p>
+                            <p>
+                                <b>TYPEIMAGE</b>
+                                - <i>optional</i>
+                                alias. Means a type image url</p>
+                                <p>
+                                    <b>STATE</b>
+                                    - <i>optional</i>
+                                    alias. Means a state or status</p>
+                                    <p>
+                                        <b>STATEIMAGE</b>
+                                        - <i>optional</i>
+                                        alias. Means a state image url</p>
+                                        <p>
+                                            <b>PREFERENCE</b>
+                                            - <i>optional</i>
+                                            alias. Means a preference or priority</p>
+                                            <p>
+                                                <b>PREFERENCEIMAGE</b>
+                                                - <i>optional</i>
+                                                alias. Means a preference image url</p>
+                                                <br>
+                                                    <h2 style="color:#0000CC">Example</h2>
+                                                    <p>The following example is valid for selecting a valid list of issues of type 'Bug' or 'Task'</p>
+                                                    <textarea class="textarea long-field wiki-textfield mentionable" cols="20" rows="30" wrap="virtual">	SELECT ISS.PKEY AS NAME, 
+                                                        ISS.SUMMARY AS DESCRIPTION,
+                                                        ISS_TYPE.PNAME AS TYPE,
+                                                        ISS_TYPE.ICONURL AS TYPEIMAGE,
+                                                        ISS_STATUS.PNAME AS STATE,
+                                                        ISS_STATUS.ICONURL AS STATEIMAGE,
+                                                        ISS_PRIORITY.PNAME AS PREFERENCE,
+                                                        ISS_PRIORITY.ICONURL AS PREFERENCEIMAGE
+                                                        FROM 
+                                                        JIRAISSUE ISS 
+                                                        INNER JOIN ISSUETYPE ISS_TYPE
+                                                        ON ISS_TYPE.ID = ISS.ISSUETYPE AND ISS_TYPE.PNAME IN ('Bug', 'Task')
+                                                        INNER JOIN ISSUESTATUS ISS_STATUS
+                                                        ON ISS_STATUS.ID = ISS.ISSUESTATUS
+                                                        INNER JOIN PRIORITY ISS_PRIORITY 
+                                                        ON ISS_PRIORITY.ID = ISS.PRIORITY
+                                                        WHERE
+                                                        (UCASE(ISS.PKEY) LIKE UCASE('%#PATTERN%') OR UCASE(ISS.SUMMARY) LIKE UCASE('%#PATTERN%'))
+                                                        AND ISS.PKEY &lt;&gt; '#RLINK'
+                                                        LIMIT #ROWNUM
+                                                    </textarea>

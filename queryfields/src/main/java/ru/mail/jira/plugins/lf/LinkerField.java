@@ -4,6 +4,7 @@
  */
 package ru.mail.jira.plugins.lf;
 
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -11,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.mail.jira.plugins.lf.struct.AutocompleteUniversalData;
+import ru.mail.jira.plugins.lf.struct.ISQLDataBean;
 import ru.mail.jira.plugins.lf.struct.IssueData;
 
 import com.atlassian.crowd.embedded.api.User;
@@ -28,26 +31,22 @@ import com.atlassian.jira.issue.customfields.view.CustomFieldParams;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
-import com.atlassian.jira.issue.search.SearchException;
-import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.UserProjectHistoryManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.I18nHelper;
-import com.atlassian.jira.web.bean.PagerFilter;
-import com.atlassian.query.Query;
 import com.atlassian.sal.api.ApplicationProperties;
+
 
 /**
  * Linker field.
  * 
  * @author Andrey Markelov
  */
-public class LinkerField
-    extends TextCFType
-    implements SortableCustomField<String>
+public class LinkerField extends TextCFType implements
+        SortableCustomField<String>
 {
     /**
      * PlugIn data manager.
@@ -72,12 +71,9 @@ public class LinkerField
     /**
      * Constructor.
      */
-    public LinkerField(
-        CustomFieldValuePersister customFieldValuePersister,
-        GenericConfigManager genericConfigManager,
-        QueryFieldsMgr qfMgr,
-        SearchService searchService,
-        IssueManager issueMgr,
+    public LinkerField(CustomFieldValuePersister customFieldValuePersister,
+        GenericConfigManager genericConfigManager, QueryFieldsMgr qfMgr,
+        SearchService searchService, IssueManager issueMgr,
         ApplicationProperties applicationProperties)
     {
         super(customFieldValuePersister, genericConfigManager);
@@ -88,17 +84,18 @@ public class LinkerField
     }
 
     @Override
-    public Map<String, Object> getVelocityParameters(
-        Issue issue,
-        CustomField field,
-        FieldLayoutItem fieldLayoutItem)
+    public Map<String, Object> getVelocityParameters(Issue issue,
+        CustomField field, FieldLayoutItem fieldLayoutItem)
     {
-        Map<String, Object> params = super.getVelocityParameters(issue, field, fieldLayoutItem);
+        Map<String, Object> params = super.getVelocityParameters(issue, field,
+            fieldLayoutItem);
         params.put("i18n", getI18nBean());
         params.put("baseUrl", applicationProperties.getBaseUrl());
 
         Utils.addViewAndEditParameters(params, field.getId());
-        
+
+        Map<String, String> cfVals = new LinkedHashMap<String, String>();
+
         Long prId;
         if (field.isAllProjects())
         {
@@ -115,8 +112,10 @@ public class LinkerField
 
         String jqlData = qfMgr.getQueryFieldData(field.getIdAsLong(), prId);
         boolean addNull = qfMgr.getAddNull(field.getIdAsLong(), prId);
-        boolean isAutocompleteView = qfMgr.isAutocompleteView(field.getIdAsLong(), prId);
-        List<String> options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(), prId);
+        boolean isAutocompleteView = qfMgr.isAutocompleteView(
+            field.getIdAsLong(), prId);
+        List<String> options = qfMgr.getLinkeFieldsOptions(field.getIdAsLong(),
+            prId);
 
         params.put("isAutocompleteView", isAutocompleteView);
         params.put("prId", prId.toString());
@@ -201,7 +200,8 @@ public class LinkerField
                     }
                     else
                     {
-                        issueData = new IssueData(mi.getSummary(), sb.toString());
+                        issueData = new IssueData(mi.getSummary(),
+                            sb.toString());
                     }
                 }
                 else if (options.contains("key"))
@@ -217,11 +217,16 @@ public class LinkerField
             }
         }
 
-        if (!Utils.isValidStr(jqlData))
+        boolean queryFlag = qfMgr.getQueryFlag(field.getIdAsLong());
+        if (Consts.LANG_TYPE_JQL.equals(Utils.getKeyByQueryFlag(queryFlag)))
         {
-            params.put("jqlNotSet", Boolean.TRUE);
-            return params;
+            if (!Utils.isValidStr(jqlData))
+            {
+                params.put("jqlNotSet", Boolean.TRUE);
+                return params;
+            }
         }
+
         params.put("jqlNotSet", Boolean.FALSE);
         params.put("options", options);
 
@@ -230,20 +235,17 @@ public class LinkerField
             params.put("hasKey", Boolean.TRUE);
         }
 
-        User user = ComponentManager.getInstance()
-            .getJiraAuthenticationContext().getLoggedInUser();
-        SearchService.ParseResult parseResult = searchService.parseQuery(user,
-            jqlData);
-        if (parseResult.isValid())
+        List<Issue> issues = null;
+        if (Consts.LANG_TYPE_JQL.equals(Utils.getKeyByQueryFlag(queryFlag)))
         {
-            params.put("jqlNotValid", Boolean.FALSE);
-            Query query = parseResult.getQuery();
-            try
+            issues = Utils.executeJQLQuery(jqlData);
+            if (issues == null)
             {
-                Map<String, String> cfVals = new LinkedHashMap<String, String>();
-                SearchResults results = searchService.search(user, query,
-                    PagerFilter.getUnlimitedFilter());
-                List<Issue> issues = results.getIssues();
+                params.put("jqlNotValid", Boolean.TRUE);
+                return params;
+            }
+            else
+            {
                 for (Issue i : issues)
                 {
                     String summary;
@@ -269,65 +271,116 @@ public class LinkerField
                     }
                     cfVals.put(i.getKey(), summary);
                 }
-
-                if (addNull)
-                {
-                    cfVals.put("Empty", Consts.EMPTY_VALUE);
-                }
-
-                String selected = Consts.EMPTY_VALUE;
-                String value = (String) issue.getCustomFieldValue(field);
-                for (Map.Entry<String, String> cf : cfVals.entrySet())
-                {
-                    if (value != null && cf.getKey().equals(value))
-                    {
-                        selected = value;
-                        break;
-                    }
-                }
-
-                if (isAutocompleteView)
-                {
-                    Issue selectedIssue = issueMgr.getIssueObject(selected);
-                    if (selectedIssue != null)
-                    {
-                        params.put("selIssue", selectedIssue);
-                    }
-                }
-                else
-                {
-                    if (selected.equals(""))
-                    {
-                        String defaultValue = (String) field
-                            .getDefaultValue(issue);
-                        if (defaultValue != null && defaultValue.length() > 0
-                            && cfVals.keySet().contains(defaultValue))
-                        {
-                            selected = defaultValue;
-                        }
-                    }
-
-                    if (cfVals != null && !cfVals.isEmpty()
-                        && selected.equals(""))
-                    {
-                        selected = cfVals.keySet().iterator().next();
-                    }
-                }
-
-                params.put("selected", selected);
-                params.put("isError", Boolean.FALSE);
-                params.put("cfVals", cfVals);
-            }
-            catch (SearchException e)
-            {
-                params.put("isError", Boolean.TRUE);
             }
         }
         else
         {
-            params.put("jqlNotValid", Boolean.TRUE);
-            return params;
+            params.put("jqlNotValid", Boolean.FALSE);
+            params.put("jqlNotSet", Boolean.FALSE);
+            params.put("isError", Boolean.FALSE);
+
+            long projectId;
+            if (field.isAllProjects())
+            {
+                projectId = Consts.PROJECT_ID_FOR_GLOBAL_CF;
+            }
+            else
+            {
+                if (issue == null)
+                {
+                    JiraAuthenticationContext authCtx = ComponentManager
+                        .getInstance().getJiraAuthenticationContext();
+                    UserProjectHistoryManager userProjectHistoryManager = ComponentManager
+                        .getComponentInstanceOfType(UserProjectHistoryManager.class);
+                    Project currentProject = userProjectHistoryManager
+                        .getCurrentProject(Permissions.BROWSE,
+                            authCtx.getLoggedInUser());
+                    if (currentProject != null)
+                    {
+                        projectId = currentProject.getId();
+                    }
+                    else
+                    {
+                        params.put("cfVals", cfVals);
+                        return params;
+                    }
+                }
+                else
+                {
+                    projectId = issue.getProjectObject().getId();
+                }
+            }
+
+            String preparedQuery = qfMgr.getQueryFieldSQLData(
+                field.getIdAsLong(), projectId);
+            if (Utils.isValidStr(preparedQuery))
+            {
+                String issueKey = (issue != null && issue.getKey() != null) ? issue
+                    .getKey() : Consts.EMPTY_VALUE;
+                preparedQuery = preparedQuery.replaceAll(Consts.SQL_RLINK,
+                    issueKey);
+                preparedQuery = preparedQuery.replaceAll(Consts.SQL_PATTERN,
+                    Consts.EMPTY_VALUE);
+                preparedQuery = preparedQuery.replaceAll(Consts.SQL_ROWNUM,
+                    Consts.SQL_MAX_LIMIT);
+
+                List<ISQLDataBean> values = Utils.executeSQLQuery(
+                    preparedQuery, AutocompleteUniversalData.class);
+                for (ISQLDataBean dataPortion : values)
+                {
+                    // TODO revise options mech
+                    cfVals.put(dataPortion.getName(),
+                        dataPortion.getDescription());
+                }
+            }
+            params.put("cfVals", cfVals);
         }
+
+        if (addNull)
+        {
+            cfVals.put("Empty", Consts.EMPTY_VALUE);
+        }
+
+        String selected = Consts.EMPTY_VALUE;
+        String value = (String) issue.getCustomFieldValue(field);
+        for (Map.Entry<String, String> cf : cfVals.entrySet())
+        {
+            if (value != null && cf.getKey().equals(value))
+            {
+                selected = value;
+                break;
+            }
+        }
+
+        if (isAutocompleteView)
+        {
+            Issue selectedIssue = issueMgr.getIssueObject(selected);
+            if (selectedIssue != null)
+            {
+                params.put("selIssue", selectedIssue);
+            }
+        }
+        else
+        {
+            if (selected.equals(""))
+            {
+                String defaultValue = (String) field.getDefaultValue(issue);
+                if (defaultValue != null && defaultValue.length() > 0
+                    && cfVals.keySet().contains(defaultValue))
+                {
+                    selected = defaultValue;
+                }
+            }
+
+            if (cfVals != null && !cfVals.isEmpty() && selected.equals(""))
+            {
+                selected = cfVals.keySet().iterator().next();
+            }
+        }
+
+        params.put("selected", selected);
+        params.put("isError", Boolean.FALSE);
+        params.put("cfVals", cfVals);
 
         return params;
     }
@@ -351,13 +404,14 @@ public class LinkerField
         if (cf.isAllProjects())
         {
             isAutocompleteView = qfMgr.isAutocompleteView(cf.getIdAsLong(),
-                Consts.PROJECT_ID_FOR_GLOBAL_CF);        }
+                Consts.PROJECT_ID_FOR_GLOBAL_CF);
+        }
         else
         {
             isAutocompleteView = qfMgr.isAutocompleteView(cf.getIdAsLong(),
                 currentProject.getId());
         }
-        
+
         if (isAutocompleteView)
         {
             if ((params == null) || params.isEmpty())
@@ -395,7 +449,8 @@ public class LinkerField
                         if (issue == null)
                         {
                             errorCollection.addError(fieldConfig.getFieldId(),
-                                i18n.getText("queryfields.error.notissue", param));
+                                i18n.getText("queryfields.error.notissue",
+                                    param));
                         }
                     }
                 }
