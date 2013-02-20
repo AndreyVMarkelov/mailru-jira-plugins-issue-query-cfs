@@ -204,7 +204,7 @@ public class Utils
                         + sqlQuery);
                     data = null;
                 }
-
+                
                 rs.close();
                 ps.close();
             }
@@ -212,7 +212,6 @@ public class Utils
             {
                 log.error("Utils::executeSQLQuery - SQL Exception occured while executing query: "
                     + e.getMessage());
-                System.out.println(e.getMessage());
                 data = null;
             }
             catch (InstantiationException e)
@@ -247,6 +246,7 @@ public class Utils
         ISQLDataBean element;
         while (rs.next())
         {
+            
             element = dataClass.newInstance();
             element.setName(rs.getString(ISQLDataBean.PROPERTY_NAME_NAME));
             element.setDescription(rs

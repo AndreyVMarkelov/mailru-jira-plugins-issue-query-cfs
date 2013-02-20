@@ -84,6 +84,7 @@ public class QueryFieldStruct
         this.projectId = projectId;
         this.projectName = projectName;
         this.data = data;
+        this.sqlData = sqlData;
         this.isAddNull = isAddNull;
         this.isAutocompleteView = isAutocompleteView;
         this.queryFlag = queryFlag;
