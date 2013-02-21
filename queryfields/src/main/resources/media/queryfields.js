@@ -107,13 +107,13 @@ function setQueryFieldValue(idstr, cid) {
     AJS.$("#" + cid).val(val);
 }
 
-function upChooseValFromNewWindow(cfId, baseUrl, returnCfId, prId) {
+function queryChooseValFromNewWindow(cfId, baseUrl, returnCfId, prId) {
     var marginTop = 100;
     var marginLeft = 500;
 
     var pickerWindow = window.open(
-        baseUrl + "/secure/popups/MailRuUserPickerValuePickerAction.jspa?cfid=" + cfId + "&inputid=" + cfId + "&returnid=" + returnCfId + "&prId=" + prId,
-        AJS.I18n.getText("jrole-group-usercf.userpicker.title"),
+        baseUrl + "/secure/popups/MailRuQueryPickerAction.jspa?cfid=" + cfId + "&inputid=" + cfId + "&returnid=" + returnCfId + "&prId=" + prId,
+        AJS.I18n.getText("queryfields.userpicker.title"),
         "status=0,toolbar=0,location=0,menubar=0,directories=0,resizable=1,scrollbars=1,height=500,width=500");
 
     pickerWindow.moveTo(marginLeft, marginTop);

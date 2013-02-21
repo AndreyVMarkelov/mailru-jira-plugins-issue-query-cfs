@@ -104,7 +104,7 @@
 
     <webwork1 key="mailru-usercf-userpicker-action" name="usercf user picker" class="java.lang.Object">
         <actions>
-            <action name="ru.mail.jira.plugins.lf.MailRuQueryPickerAction" alias="MailRuUserPickerValuePickerAction">
+            <action name="ru.mail.jira.plugins.lf.MailRuQueryPickerAction" alias="MailRuQueryPickerAction">
                 <view name="input">/templates/query-field-picker.vm</view>
                 <view name="success">/templates/query-field-picker.vm</view>
             </action>
