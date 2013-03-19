@@ -119,7 +119,7 @@ function queryChooseValFromNewWindow(cfId, baseUrl, returnCfId, prId) {
     pickerWindow.moveTo(marginLeft, marginTop);
 }
 
-function selectAndReturnValue(value, returnId) {
+function querySelectAndReturnValue(value, returnId) {
     var returnElem = window.opener.jQuery("#" + returnId);
 
     if (returnElem) {
