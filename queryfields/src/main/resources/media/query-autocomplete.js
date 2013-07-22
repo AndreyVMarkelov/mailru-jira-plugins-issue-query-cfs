@@ -27,6 +27,9 @@ jQuery(document).ready(function() {
             initSelectedIssuesList('.cfs-query-multi-linker-selected-list');
         }
     );
+    manageQueryCfsAutocompleteFields('.cfs-query-linker-autocomplete');
+    manageQueryCfsAutocompleteFields('.cfs-query-multi-linker-autocomplete');
+    initSelectedIssuesList('.cfs-query-multi-linker-selected-list');
 });
 
 function manageQueryCfsAutocompleteFields(classname) {
