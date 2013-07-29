@@ -6,14 +6,12 @@ package ru.mail.jira.plugins.lf.struct;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.Immutable;
 
 /**
  * Html JSON representation.
  *
  * @author Andrey Markelov
  */
-@Immutable
 @XmlRootElement
 public class HtmlEntity
 {

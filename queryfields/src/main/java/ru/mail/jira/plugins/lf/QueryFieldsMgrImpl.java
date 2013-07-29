@@ -4,13 +4,11 @@
  */
 package ru.mail.jira.plugins.lf;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-
 
 /**
  * Implementation of <code>QueryFieldsMgr</code>.
