@@ -85,6 +85,14 @@
         <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-linker-field" />
     </customfield-searcher>
 
+    <customfield-searcher key="mailru-multilinker-field-searcher" name="Query Issue Multi Linker Custom Field Searcher" i18n-name-key="mailru.selectcf.admin.multiseacrher" class="ru.mail.jira.plugins.lf.SimpleListSearcher">
+        <description>Allow searching for query issue multi linker custom field.</description>
+        <resource type="velocity" name="label" location="templates/label-linkerfield.vm" />
+        <resource type="velocity" name="search" location="templates/search-linkerfield.vm" />
+        <resource type="velocity" name="view" location="templates/view-search-linkerfield.vm" />
+        <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-multi-linker-field" />
+    </customfield-searcher>
+
     <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="system.admin/globalsettings" weight="95">
         <label key="queryfields.admin.title"/>
         <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
