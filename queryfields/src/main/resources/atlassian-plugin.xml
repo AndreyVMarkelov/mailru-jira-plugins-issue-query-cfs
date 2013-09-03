@@ -93,7 +93,7 @@
         <valid-customfield-type package="${project.groupId}.${project.artifactId}" key="mailru-multi-linker-field" />
     </customfield-searcher>
 
-    <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="admin_system_menu/top_system_section" weight="95">
+    <web-item key="queryfields-configuration_old" name="Query issues custom fields configuration link" section="system.admin/globalsettings" weight="95">
         <label key="queryfields.admin.title"/>
         <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
             <param name="permission">admin</param>
