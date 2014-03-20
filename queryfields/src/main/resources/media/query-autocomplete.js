@@ -158,7 +158,7 @@ function initSelectedIssuesList(classname) {
                                     }
 
                                     listBody += "<li class=\"aui-list-item\"" + " li-cf-value-" + cfId + "=\"" + obj_name + "\">"
-                                        + "<a class=\"aui-list-item-link aui-iconised-link\" href=\"#\"" + stylePart + "title=\"" + tag_title + "\">"
+                                        + "<a class=\"aui-list-item-link aui-iconised-link\" href=\"#\" onclick=\"return false;\"" + stylePart + "title=\"" + tag_title + "\">"
                                         + dataToList + statePart + "</a>" + "</li>";
                                 }
                                 i++;
