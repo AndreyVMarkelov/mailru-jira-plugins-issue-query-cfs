@@ -113,7 +113,7 @@ function upChooseValFromNewWindow(cfId, baseUrl, returnCfId, prId) {
 
     var pickerWindow = window.open(
         baseUrl + "/secure/popups/MailRuUserPickerValuePickerAction.jspa?cfid=" + cfId + "&inputid=" + cfId + "&returnid=" + returnCfId + "&prId=" + prId,
-        AJS.I18n.getText("jrole-group-usercf.userpicker.title"),
+        "_blank",
         "status=0,toolbar=0,location=0,menubar=0,directories=0,resizable=1,scrollbars=1,height=500,width=500");
 
     pickerWindow.moveTo(marginLeft, marginTop);
